@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "donatedBy": "Andrews",
+        "donatedTo": "Ghana Aid",
+        "location": "Accra",
+        "Date": "22-03-23"
+    },
+    {
+        "id": 2,
+        "donatedBy": "Martin",
+        "donatedTo": "Ghana Aid",
+        "location": "Sampa",
+        "Date": "25-03-23"
+    },
+    {
+        "id": 3,
+        "donatedBy": "Emmanuel",
+        "donatedTo": "Ghana Aid",
+        "location": "Sunyani",
+        "Date": "22-04-23"
+    }
+]
