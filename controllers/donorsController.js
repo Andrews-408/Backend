@@ -1,9 +1,11 @@
 
 const Donors = require('../models/donorModel');
+const ApiFeatures = require('../Utils/apiFeatures')
+const catchAsync = require('../Utils/catchAsync')
+const AppError = require('../Utils/appError')
 
-// create new donors and add to the database
-exports.createDonor = async (req, res) => {
-	try{
+// creates a new donors 
+exports.createDonor = catchAsync(async (req, res, next) => {
 		const newDonor = await Donors.create(req.body);
 
 		res.status(201).json({
@@ -12,39 +14,38 @@ exports.createDonor = async (req, res) => {
 				newDonor
 			}
 		});
-	} catch(err){
-		res.status(400).json({
-			status: 'fail',
-			message: err
-		})
+	
 	}
-}
+)
+
+
 
 // get all current donors from the database
-exports.getAllDonors = async (req, res) => {
-	try {
-		const donors = await Donors.find();
+exports.getAllDonors = catchAsync (async (req, res, next) => {
+		// api filtering
+		const features = new ApiFeatures(Donors.find(),req.query).filter().sort().setFields()
+		const donors =  await features.query;
 
+		// responses
 		res.status(200).json({
 			status: "success",
 			results: donors.length,
 			data : {
 				donors
 			}
-		})
-	}catch(err){
-		res.status(404).json({
-			status: "fail",
-			message : err
-		})
-	}
-}
+		})	
+})
 
-// finds a specific donor by ID
+// finds a specific donor by username
 
-exports.getDonor = async (req, res) => {
-	try{
-		const donor = await Donors.findById(req.params.id)
+exports.getDonor = catchAsync( async (req, res, next) => {
+	
+		const donor = await Donors.findOne({username : req.params.username})
+
+		// adding 404 errors
+		if(!donor){
+			return next(new AppError('Username matches no donor', 404));
+		}
 
 		res.status(200).json({
 			status: "success",
@@ -52,11 +53,45 @@ exports.getDonor = async (req, res) => {
 				donor
 			}
 		})
-	}catch(err){
-		res.status(404).json({
-			status: "fail",
-			message: err
-		})
 	}
-}
+	)
+	
+
+
+// update a donor details
+
+exports.updateDonor = catchAsync(async (req, res, next) => {
+	
+		const updatedDonor = await Donors.findOneAndUpdate({username: req.params.username}, req.body, {
+			new: true,
+			runValidators: true
+		})
+
+		if(!updatedDonor){
+			return next(new AppError('Username matches no donor', 404));
+		}
+
+		res.status(200).json({
+			status: "success",
+			data : {
+				updatedDonor
+			}
+	})
+	
+})
+
+// delete donor account
+
+exports.deleteDonorAccount = catchAsync (async(req, res, next) => {
+	
+	const donor = await Donors.findOneAndDelete({username: req.params.username})
+	if(!donor){
+		return next(new AppError('Username matches no donor', 404));
+	}
+	res.status(204).json({
+		status: "Successfully deleted"
+	})
+	
+	}
+)
 

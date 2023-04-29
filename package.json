@@ -4,17 +4,20 @@
   "description": "Getting started with nodejs",
   "main": "Reading-files.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "debug": "ndb server.js"
   },
   "author": "Yeboah Andrews",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "mongoose": "^5.13.17",
     "morgan": "^1.10.0",
     "slugify": "^1.6.5",
-    "superagent": "^8.0.9"
+    "superagent": "^8.0.9",
+    "validators": "^0.3.1"
   },
   "devDependencies": {
     "@types/express": "^4.17.17",
@@ -22,6 +25,7 @@
     "@typescript-eslint/eslint-plugin": "^5.56.0",
     "@typescript-eslint/parser": "^5.56.0",
     "eslint-plugin-react": "^7.32.2",
+    "ndb": "^1.1.5",
     "nodemon": "^2.0.21"
   }
 }

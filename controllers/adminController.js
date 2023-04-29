@@ -1,6 +1,6 @@
 const Admins = require("../models/adminModel");
 
-
+// get all admins
 exports.getAllAdmins = async(req, res) => {
     try{
         const admins = await Admins.find()
@@ -19,9 +19,10 @@ exports.getAllAdmins = async(req, res) => {
     }
 };
 
+// get an admin by username
 exports.getAdmin = async (req, res) => {
     try{
-        const admin = await Admins.find({_id : req.params.id});
+        const admin = await Admins.findById(req.params.id);
         res.status(200).json({
             status: "success",
             data : {
@@ -36,3 +37,27 @@ exports.getAdmin = async (req, res) => {
         })
     }
 }
+
+//update an admin
+exports.updateAdmin = async (req, res) => {
+    try{
+        const admin = await Admins.findOneAndUpdate(req.params.username, req.body, {
+            new: true,
+            runValidators: true
+        })
+
+        res.status(200).json({
+            status: "success",
+            data : {
+                admin
+            }
+        })
+    }catch(err){
+        res.status(404).json({
+            status: "Fail",
+            message: err
+        })
+    }
+}
+
+

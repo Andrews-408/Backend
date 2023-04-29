@@ -5,14 +5,17 @@ const donorsController = require("../controllers/donorsController");
 
 const router = express.Router();
 
+
 router
 	.route("/")
 	.post(donorsController.createDonor)
 	.get(donorsController.getAllDonors)
 
 router
-	.route("/:id")
+	.route("/:username")
 	.get(donorsController.getDonor)
+	.patch(donorsController.updateDonor)
+	.delete(donorsController.deleteDonorAccount)
 
 
 
