@@ -1,13 +1,15 @@
 
 const Donors = require('../models/donorModel');
-const ApiFeatures = require('../Utils/apiFeatures')
-const catchAsync = require('../Utils/catchAsync')
-const AppError = require('../Utils/appError')
+const ApiFeatures = require('../Utils/apiFeatures');
+const catchAsync = require('../Utils/catchAsync');
+const AppError = require('../Utils/appError');
+
 
 // creates a new donors 
 exports.createDonor = catchAsync(async (req, res, next) => {
 		const newDonor = await Donors.create(req.body);
 
+		
 		res.status(201).json({
 			status: 'success',
 			data : {
