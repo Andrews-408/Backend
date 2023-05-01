@@ -32,7 +32,7 @@ const handleCastErrorDB = err => {
 }
 
 // handles errors with duplicate fields in the database
-const handleDuplicatesDB = err => {
+const handleDuplicatesDB = () => {
     const message = `Duplicate field value. Please use another value!`
     return new AppError(message, 400)
 }
@@ -43,6 +43,8 @@ const handleValidationError = err => {
     return new AppError(message, 400);
 }
 
+const handleJWTerror = () => new AppError('Invalid token. Please log in again', 401)
+const handleExpiredError = () => new AppError('Token has expired. Please Login again', 401)
 
 module.exports = (err,req,res,next)=>{
     err.statusCode = err.statusCode || 500;
@@ -56,8 +58,10 @@ module.exports = (err,req,res,next)=>{
         let error = {...err};
 
         if (error.name ==='CastError')  error = handleCastErrorDB(error);
-        if(error.code === 11000 ) error = handleDuplicatesDB(error);
+        if(error.code === 11000 ) error = handleDuplicatesDB();
         if(error.name === 'ValidationError') error = handleValidationError(error)
+        if(error.name=== 'JsonWebTokenError') error = handleJWTerror()
+        if(error.name === 'TokenExpiredError') error = handleExpiredError()
 
         sendErrProd(error, res);
     }

@@ -1,9 +1,12 @@
 const Admins = require("../models/adminModel");
+const catchAsync = require("../Utils/catchAsync")
+const AppError =  require("../Utils/appError")
+const ApiFeatures = require("../Utils/apiFeatures")
 
 // get all admins
-exports.getAllAdmins = async(req, res) => {
-    try{
-        const admins = await Admins.find()
+exports.getAllAdmins = catchAsync (async(req, res, next) => {
+        const feature = new ApiFeatures(Admins.find(), req.query).filter().sort().setFields()
+        const admins = await feature.query
         res.status(200).json({
             status: 'success',
             results: admins.length,
@@ -11,18 +14,17 @@ exports.getAllAdmins = async(req, res) => {
                 admins
             }
         })
-    }catch(err){
-        res.status(404).json({
-            status: 'fail',
-            message: err
-        })
-    }
-};
+    })
 
 // get an admin by username
-exports.getAdmin = async (req, res) => {
-    try{
-        const admin = await Admins.findById(req.params.id);
+exports.getAdmin = catchAsync (async (req, res, next) => {
+
+        const admin = await Admins.findOne({username: req.params.username});
+
+        if(!admin){
+            return next(new AppError('Username matches no Admin', 404))
+        }
+
         res.status(200).json({
             status: "success",
             data : {
@@ -30,34 +32,27 @@ exports.getAdmin = async (req, res) => {
             }
 
         })
-    }catch(err){
-        res.status(400).json({
-            status: "fail",
-            message: err
-        })
-    }
-}
+   
+})
 
 //update an admin
-exports.updateAdmin = async (req, res) => {
-    try{
+exports.updateAdmin = catchAsync (async (req, res, next) => {
         const admin = await Admins.findOneAndUpdate(req.params.username, req.body, {
             new: true,
             runValidators: true
         })
 
+        if(!admin){
+            return next(new AppError('Username matches no Admin', 404));
+        }
+
         res.status(200).json({
             status: "success",
             data : {
                 admin
             }
         })
-    }catch(err){
-        res.status(404).json({
-            status: "Fail",
-            message: err
-        })
-    }
-}
+   
+})
 
 

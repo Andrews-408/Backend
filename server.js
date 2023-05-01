@@ -1,6 +1,7 @@
 
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+// const Admins = require("./models/adminModel")
 
 // process.on('uncaughtException', err=>{
 // 	console.log(err.name, err.message)
