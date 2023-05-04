@@ -1,8 +1,6 @@
 const AppError = require("../Utils/appError");
 const catchAsync = require("../Utils/catchAsync");
 const sendMail = require("../Utils/email");
-const Donors = require("../models/donorModel");
-const Admins = require("../models/adminModel");
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto')
 const {promisify} = require('util')
@@ -11,73 +9,58 @@ const SignToken = (id) => {
      return jwt.sign({id}, process.env.JWT_SECRET, {expiresIn : process.env.JWT_EXPIRY})
 }
 
-exports.signUp = catchAsync (async (req, res, next) => {
-    const user = await Donors.create(req.body);
-
+const SendToken = (user, res, statusCode) => {
     const token = SignToken(user._id)
 
-    res.status(201).json({
+    res.status(statusCode).json({
         status: 'success',
         token,
         data : {
             user
         }
     })
-})
+
+}
 
 
-// controls donor sign in
-exports.signIn = catchAsync(async (req, res, next) =>{
-    const {username, password} = req.body
+// user sign up controller
+exports.signUp = (model) => { 
+    return catchAsync (async (req, res, next) => {
+            const user = await model.create(req.body);
+            SendToken(user, res, 201)
+
+    }
+    )
+}
+
+
+// user login controller
+exports.signIn = (model) => {
+        return catchAsync(async (req, res, next) =>{
+            const {username, password} = req.body
     
-    if(!username || !password){
-        return next(new AppError('Provide username and password', 400 ))
-    }
-    // checks if user exists and password is correct
-    const user = await Donors.findOne({username}).select('+password');
+            if(!username || !password){
+                return next(new AppError('Provide username and password', 400 ))
+            }
+            // checks if user exists and password is correct
+            const user = await model.findOne({username}).select('+password');
 
-    if(!user || !(await user.correctPassword(password, user.password))){
-        return next(new AppError('Incorrect username or password',401))
-    }
+            if(!user || !(await user.correctPassword(password, user.password))){
+                return next(new AppError('Incorrect username or password',401))
+            }
 
-    const token = SignToken(user._id)
+            SendToken(user, res, 201)
 
-    res.status(200).json({
-        status : 'success',
-        token,
-    })
+        })}
 
-})
 
-// controls admins sign in
 
-exports.adminSignIn = catchAsync (async (req, res, next) => {
-    const {username, password} = req.body;
 
-    // checks if user has provided password and username
-    if(!username || !password){
-        return next(new AppError('Provide Username and Password', 400))
-    }
-
-    const user = await Admins.findOne({username}).select('+password')
-
-    if(!user || !(await user.correctPassword(password, user.password))){
-        return next(new AppError('Invalid username or password', 401))
-    }
-
-    const token = SignToken(user._id)
-
-    res.status(200).json({
-        status: 'success', 
-        token
-    })
-
-})
 
 
 // protecting routes
 
-exports.protect = catchAsync(async(req, res, next)=>{
+exports.protect = (model) => catchAsync(async(req, res, next)=>{
     // get token and check if it's there
         let token;
         if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
@@ -91,7 +74,7 @@ exports.protect = catchAsync(async(req, res, next)=>{
         const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET)
         
     //checking if user still exist
-        const freshUser = await Donors.findById(decoded.id)
+        const freshUser = await model.findById(decoded.id)
         if(!freshUser){
             return next(new AppError('User with this token does no longer exist', 401))
         }
@@ -101,12 +84,16 @@ exports.protect = catchAsync(async(req, res, next)=>{
         }
     // GRANT ACCESS TO PROTECTED ROUTE
         req.user = freshUser;
+        console.log(req.user)
         next()
 })
 
-exports.forgotPassword = catchAsync(async (req,res,next)=>{
+
+// resetToken mailing controller
+
+exports.forgotPassword = (model) => catchAsync(async (req,res,next)=>{
     // get user based on posted email
-    const user = await Donors.findOne({email : req.body.email});
+    const user = await model.findOne({email : req.body.email});
     if(!user){
         next(new AppError('There is no user with the provided email address', 404))
     }
@@ -118,16 +105,19 @@ exports.forgotPassword = catchAsync(async (req,res,next)=>{
     const resetURL = `${req.protocol}://${req.get('host')}/api/caretoshare/donors/resetPassword/${resetToken}`
     
     const message = `Forgot password? Submit a Patch request with your new password and passwordConfirm to: 
-                     ${resetURL} . \nIf you didn't forget your password, please ignore this email`
+                     ${resetURL}.\nIf you didn't forget your password, please ignore this email`
     try{
         await sendMail({
             email: user.email,
             subject : 'Your password reset token (valid for 10min)',
-            message
+            message : `Reset Token: ${resetToken}`
         })
         res.status(200).json({
             status: 'success',
-            message : 'Token sent to email'
+            message : 'Token sent to email',
+            data : {
+                user
+            }
         })
     }catch(err){
         user.passwordResetToken = undefined
@@ -138,15 +128,15 @@ exports.forgotPassword = catchAsync(async (req,res,next)=>{
     
 });
 
-
-exports.resetPassword = catchAsync(async (req, res, next)=> {
+// reset password controller
+exports.resetPassword = (model)=>catchAsync(async (req, res, next)=> {
     // get user based on the token
     const hashedToken = crypto
                             .createHash('sha256')
                             .update(req.params.token)
                             .digest('hex')
 
-    const user = await Donors.findOne({
+    const user = await model.findOne({
                                         passwordResetToken : hashedToken, 
                                         passwordResetExpires : {$gt : Date.now()} 
                                     })
@@ -165,11 +155,40 @@ exports.resetPassword = catchAsync(async (req, res, next)=> {
     //update changedPasswordAT property for the user
 
     //log the user in, send JWT
-    const token = SignToken(user._id);
-
-    res.status(200).json({
-        status: 'success',
-        token
-    });
+    SendToken(user, res, 200)
 
 }) 
+
+// delete user
+exports.deactivateUser = (model) => catchAsync( async (req, res, next)=>{
+    const user = await model.findOneAndUpdate({username: req.params.username}, {isActive : false}, {
+        new: true,
+        runValidators: true
+    })
+
+    SendToken(user, res, 204);
+})
+
+// exports.updatePassword = (model) => catchAsync( async(res, req, next)=> {
+//     // checks if user is logged in
+//     const currentUser = req.user
+//     const user = await model.findById(req.user._id).select('+password')
+
+//     // check if the provided current password is correct
+//     if(!(await user.correctPassword(req.body.currentPassword, user.password))){
+//         return next(new AppError('Your current password is incorrect', 401))
+//     }
+
+//     //If so, update password
+//     user.password = req.body.password;
+//     user.passwordConfirm = req.body.passwordConfirm
+//     await user.save();
+
+//     const token = SignToken(user._id);
+
+//     res.status(200).json({
+//         status: 'success',
+//         token
+//     });
+
+// })

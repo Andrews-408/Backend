@@ -6,8 +6,6 @@ const AppError = require('./Utils/appError')
 const globalErrorHandler = require('./controllers/errorController')
 
 const donorsRouter = require("./routes/donorsRouter");
-const adminRouter = require("./routes/adminRouter")
-const charityRouter = require("./routes/charityRouter")
 const cors = require('cors')
 const app = express();
 
@@ -24,8 +22,7 @@ app.use((req, res, next)=>{
 
 // routes
 app.use("/api/caretoshare/donors", donorsRouter);
-app.use("/api/caretoshare/admins", adminRouter);
-app.use("/api/caretoshare/charities", charityRouter)
+
 
 // handling unhandled routes
 

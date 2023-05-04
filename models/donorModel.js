@@ -91,7 +91,7 @@ donorSchema.methods.passwordChangedAfter = function(JWTTimeStamp){
 	if(this.passwordChangedAt){
 		const changedTimeStamp = parseInt(this.passwordChangedAt.getTime()/1000,10);
 
-		console.log(changedTimeStamp, JWTTimeStamp);
+		//console.log(changedTimeStamp, JWTTimeStamp);
 		// returns true if password has been changed
 		return JWTTimeStamp < changedTimeStamp
 	}
@@ -110,7 +110,7 @@ donorSchema.methods.createPasswordResetToken = function(){
 
 	this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
 
-	console.log({resetToken}, this.passwordResetToken)
+	//console.log({resetToken}, this.passwordResetToken)
 
 	return resetToken;
 }
