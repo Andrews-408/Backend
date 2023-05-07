@@ -3,6 +3,7 @@ const express = require("express");
 const donorsController = require("../controllers/donorsController");
 const authController = require("../controllers/authController")
 const Donors = require("../models/donorModel")
+const Organisation = require("../models/organisationModel")
 
 
 const router = express.Router();
@@ -25,6 +26,14 @@ router
 	.delete(authController.deactivateUser(Donors))
 
 
+/**
+ * endpoints for Organisation
+ */
+router.post("/organisation/signUp", authController.signUp(Organisation));
+router.post("/organisation/signIn", authController.signIn(Organisation));
+router.post("/organisation/forgotPassword", authController.forgotPassword(Organisation))
+router.patch("/organisation/resetPassword/:token", authController.resetPassword(Organisation))
 
+router.post("/organisation/", require('../controllers/organisationController'));
 
 module.exports = router;
