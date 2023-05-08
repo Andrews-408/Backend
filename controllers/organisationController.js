@@ -39,7 +39,7 @@ router.get('/', async (req, res, next) => {
 /**
  * mark organisation as verified
  */
-router.get("/:organisation_id/mark-as-verified", protect, async (req, res, next) => {
+router.post("/:organisation_id/mark-as-verified", protect, async (req, res, next) => {
     try {
         const result = await updateOrganisationAsVerified(req);
         if (result.status === "success") {
