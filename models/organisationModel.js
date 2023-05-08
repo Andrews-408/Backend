@@ -117,6 +117,6 @@ organisationSchema.methods.createPasswordResetToken = function(){
 	return resetToken;
 }
 
-const Organisation = mongoose.model("Organisations", donorSchema);
+const Organisation = mongoose.model("Organisations", organisationSchema);
 
 module.exports = Organisation;
