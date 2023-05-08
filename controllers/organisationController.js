@@ -50,3 +50,5 @@ router.post("/:organisation_id/mark-as-verified", protect, async (req, res, next
         next(error);
     }
 });
+
+module.exports = router;
