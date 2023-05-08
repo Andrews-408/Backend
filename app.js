@@ -21,7 +21,7 @@ app.use((req, res, next)=>{
 });
 
 // routes
-app.use("/api/caretoshare/donors", donorsRouter);
+app.use("/api/caretoshare/", donorsRouter);
 
 
 // handling unhandled routes

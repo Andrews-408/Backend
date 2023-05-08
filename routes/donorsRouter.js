@@ -2,38 +2,32 @@
 const express = require("express");
 const donorsController = require("../controllers/donorsController");
 const authController = require("../controllers/authController")
-const Donors = require("../models/donorModel")
-const Organisation = require("../models/organisationModel")
+const Users = require("../models/userModel")
 
 
 const router = express.Router();
 
-router.post("/signUp", authController.signUp(Donors))
-router.post("/signIn", authController.signIn(Donors))
-router.post("/forgotPassword", authController.forgotPassword(Donors))
-router.patch("/resetPassword/:token", authController.resetPassword(Donors))
+router.post("/signUp", authController.signUp(Users))
+router.post("/signIn", authController.signIn(Users))
+router.post("/forgotPassword", authController.forgotPassword(Users))
+router.patch("/resetPassword/:token", authController.resetPassword(Users))
 //router.patch("/updatePassword", authController.protect(Donors), authController.updatePassword(Donors))
 
 router
-	.route("/")
+	.route("/donors/")
 	.post(donorsController.createDonor)
-	.get(authController.protect(Donors),donorsController.getAllDonors)
+	.get(authController.protect(Users),donorsController.getAllDonors)
 
 router
-	.route("/:username")
+	.route("/donors/:username")
 	.get(donorsController.getDonor)
 	.patch(donorsController.updateDonor)
-	.delete(authController.deactivateUser(Donors))
+	.delete(authController.deactivateUser(Users))
 
 
 /**
  * endpoints for Organisation
  */
-router.post("/organisation/signUp", authController.signUp(Organisation));
-router.post("/organisation/signIn", authController.signIn(Organisation));
-router.post("/organisation/forgotPassword", authController.forgotPassword(Organisation))
-router.patch("/organisation/resetPassword/:token", authController.resetPassword(Organisation))
-
-router.use("/organisation/", require('../controllers/organisationController'));
+router.use("/organisations", require('../controllers/organisationController'));
 
 module.exports = router;

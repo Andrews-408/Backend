@@ -1,5 +1,6 @@
 const express = require("express");
-const { protect } = require("./authController");
+const authController = require("./authController");
+const Users = require("../models/userModel")
 const { getOrganisationDetails, getAllOrganisations, updateOrganisationAsVerified } = require("../repository/crud/organisation/organisation.crud");
 
 const router = express.Router();
@@ -7,7 +8,7 @@ const router = express.Router();
 /**
  * get organisation details
  */
-router.get("/:organisation_id", protect, async (req, res, next) => {
+router.get("/:username", authController.protect(Users), async (req, res, next) => {
     try {
         const result = await getOrganisationDetails(req);
         if (result.status === "success") {
@@ -39,7 +40,7 @@ router.get('/', async (req, res, next) => {
 /**
  * mark organisation as verified
  */
-router.post("/:organisation_id/mark-as-verified", protect, async (req, res, next) => {
+router.patch("/:username/mark-as-verified", authController.protect(Users), async (req, res, next) => {
     try {
         const result = await updateOrganisationAsVerified(req);
         if (result.status === "success") {

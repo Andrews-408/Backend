@@ -4,14 +4,14 @@ const bcrypt = require('bcryptjs')
 const crypto = require('crypto')
 
 
-const donorSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
 	firstName : {
 		type: String,
-		required: [true , 'FirstName is required']
+		required: [false , 'FirstName is required']
 	},
 	lastName : {
 		type : String,
-		required : [true , 'LastName is required']
+		required : [false , 'LastName is required']
 	},
 	username : {
 		type : String,
@@ -45,26 +45,42 @@ const donorSchema = new mongoose.Schema({
 	},
 	location : {
 		type : String,
-		required: [true, 'Location is required'],
+		required: [false, 'Location is required'],
 	},
 	contact : {
 		type : String,
-		required: [true, 'Contact is required'],
-	},
-	createdAt : {
-		type: Date,
-		default: new Date().toISOString()
+		required: [false, 'Contact is required'],
 	},
 	isActive : {
 		type: Boolean,
 		default: true
 	},
+	role : {
+		type: String,
+		required: true
+	},
 	passwordChangedAt : Date,
 	passwordResetToken : String,
-	passwordResetExpires: Date
-})
+	passwordResetExpires: Date,
+	organisationName : {
+		type: String,
+		required: [false , 'Organisation name is required']
+	},
+	isVerified : {
+		type: Boolean,
+		default: false
+	},
+	businessCertificate : {
+		type: String,
+		default: false
+	},
+	mission : {
+		type: String,
+		default: false
+	},
+}, { timestamps: true })
 
-donorSchema.pre('save', async function(next){
+userSchema.pre('save', async function(next){
 	// checks if password is not modified
 	if(!this.isModified('password')) return next();
 
@@ -76,18 +92,18 @@ donorSchema.pre('save', async function(next){
 	next()
 })
 
-donorSchema.pre('save', function(next){
+userSchema.pre('save', function(next){
 	if(!this.isModified('password') || this.isNew) return next();
 
 	this.passwordChangedAt = Date.now() - 1000;
 	next();
 })
 
-donorSchema.methods.correctPassword = async function(candidatePassword, userPassword){
+userSchema.methods.correctPassword = async function(candidatePassword, userPassword){
 	return await bcrypt.compare(candidatePassword, userPassword)
 }
 
-donorSchema.methods.passwordChangedAfter = function(JWTTimeStamp){
+userSchema.methods.passwordChangedAfter = function(JWTTimeStamp){
 	if(this.passwordChangedAt){
 		const changedTimeStamp = parseInt(this.passwordChangedAt.getTime()/1000,10);
 
@@ -100,7 +116,7 @@ donorSchema.methods.passwordChangedAfter = function(JWTTimeStamp){
 	return false
 }
 
-donorSchema.methods.createPasswordResetToken = function(){
+userSchema.methods.createPasswordResetToken = function(){
 	const resetToken = crypto.randomBytes(32).toString('hex')
 
 	this.passwordResetToken = crypto
@@ -115,6 +131,6 @@ donorSchema.methods.createPasswordResetToken = function(){
 	return resetToken;
 }
 
-const Donors = mongoose.model("Donors", donorSchema);
+const Users = mongoose.model("Users", userSchema);
 
-module.exports = Donors;
+module.exports = Users;
