@@ -15,8 +15,7 @@ router.patch("/resetPassword/:token", authController.resetPassword(Users))
 
 router
 	.route("/donors/")
-	.post(donorsController.createDonor)
-	.get(authController.protect(Users),donorsController.getAllDonors)
+	.get(donorsController.getAllDonors)
 
 router
 	.route("/donors/:username")

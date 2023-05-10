@@ -67,19 +67,27 @@ exports.getDonor = catchAsync( async (req, res, next) => {
 // update a donor details
 
 exports.updateDonor = catchAsync(async (req, res, next) => {
-		const updatedDonor = await Users.findOneAndUpdate({username: req.params.username}, req.body, {
+		const user = await Users.findOneAndUpdate({username: req.params.username}, req.body, {
 			new: true,
 			runValidators: true
 		})
 
-		if(!updatedDonor){
+		if(!user){
 			return next(new AppError('Username matches no donor', 404));
 		}
+		
+		// filter fields after donor updates 
+		user.mission = undefined;
+		user.organisationName = undefined;
+		user.isVerified = undefined;
+		user.isApproved = undefined;
+		user.businessCertificate = undefined;
+		await user.save({validateBeforeSave: false})
 
 		res.status(200).json({
 			status: "success",
 			data : {
-				updatedDonor
+				user
 			}
 	})
 	
