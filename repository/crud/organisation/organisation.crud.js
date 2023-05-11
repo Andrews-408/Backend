@@ -1,7 +1,6 @@
 const Users = require("../../../models/userModel");
 
 async function getAllOrganisations(skip = 0, limit = 50) {
-    try {
         const offset = skip * limit;
         const result = await Users.find({role: "Organisation"}).skip(offset).limit(limit);
         return {
@@ -10,9 +9,6 @@ async function getAllOrganisations(skip = 0, limit = 50) {
             results : result.length,
             data: result
 
-        }
-    } catch (error) {
-        return { status: "error", message: "an error occurred" };
     }
 }
 
@@ -20,7 +16,7 @@ async function getOrganisationDetails(req) {
     try {
         const result = await Users.findOne({username: req.params.username, role: 'Organisation'});
         if (result === null) {
-            return { status: "success", message: "organisation not found" };
+            return { status: "failed", message: "organisation not found" };
         }
         return {
             status: "success",
