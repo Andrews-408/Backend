@@ -28,7 +28,7 @@ router.get('/', async (req, res, next) => {
         const result = await getAllOrganisations(
             req.params.skip, req.params.limit
         );
-        if (result === "success") {
+        if (result.status === "success") {
             return res.status(200).json(result);
         }
         return res.status(400).json(result);

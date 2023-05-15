@@ -33,6 +33,15 @@ exports.signUp = (model) => {
                 passwordConfirm: req.body.passwordConfirm,
                 role : req.body.role
             });
+
+            if(user.role === "Admin" || user.role === "Donor" ){
+                user.isApproved = undefined;
+                user.isVerified = undefined;
+                await user.save({validateBeforeSave : false});
+            }
+
+
+
             SendToken(user, res, 201)
 
     }
@@ -53,6 +62,10 @@ exports.signIn = (model) => {
 
             if(!user || !(await user.correctPassword(password, user.password))){
                 return next(new AppError('Incorrect username or password',401))
+            }
+
+            if(!user.isActive){
+                return next(new AppError('Account is not active', 400))
             }
 
             SendToken(user, res, 201)
@@ -86,7 +99,7 @@ exports.protect = (model) => catchAsync(async(req, res, next)=>{
         }
     //check if user changed password after token was issued
         if(currentUser.passwordChangedAfter(decoded.iat)){
-            return next( new AppError('User recently changed Password. Please log in again'))
+            return next( new AppError('User recently changed Password. Please log in again', 400))
         }
     // GRANT ACCESS TO PROTECTED ROUTE
         req.user = currentUser;
@@ -108,7 +121,7 @@ exports.forgotPassword = (model) => catchAsync(async (req,res,next)=>{
     const resetToken = user.createPasswordResetToken();
     await user.save({validateBeforeSave : false});
 
-    const resetURL = `${req.protocol}://${req.get('host')}/api/caretoshare/donors/resetPassword/${resetToken}`
+    //const resetURL = `${req.protocol}://${req.get('host')}/api/caretoshare/donors/resetPassword/${resetToken}`
     
     // const message = `Forgot password? Submit a Patch request with your new password and passwordConfirm to: 
     //                  ${resetURL}.\nIf you didn't forget your password, please ignore this email`
