@@ -188,26 +188,3 @@ exports.deactivateUser = (model) => catchAsync( async (req, res, next)=>{
     SendToken(user, res, 204);
 })
 
-// exports.updatePassword = (model) => catchAsync( async(res, req, next)=> {
-//     // checks if user is logged in
-//     const currentUser = req.user
-//     const user = await model.findById(req.user._id).select('+password')
-
-//     // check if the provided current password is correct
-//     if(!(await user.correctPassword(req.body.currentPassword, user.password))){
-//         return next(new AppError('Your current password is incorrect', 401))
-//     }
-
-//     //If so, update password
-//     user.password = req.body.password;
-//     user.passwordConfirm = req.body.passwordConfirm
-//     await user.save();
-
-//     const token = SignToken(user._id);
-
-//     res.status(200).json({
-//         status: 'success',
-//         token
-//     });
-
-// })
