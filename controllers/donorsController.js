@@ -5,7 +5,7 @@ const catchAsync = require('../Utils/catchAsync');
 const AppError = require('../Utils/appError');
 
 
-// creates a new donors 
+// creates a new donor
 exports.createDonor = catchAsync(async (req, res, next) => {
 		const newDonor = await Users.create(req.body);
 

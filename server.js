@@ -1,5 +1,6 @@
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+
 // const Admins = require("./models/adminModel")
 
 // process.on('uncaughtException', err=>{
@@ -8,6 +9,7 @@ const mongoose = require("mongoose");
 	
 // })
 const app = require("./app");
+
 
 
 
