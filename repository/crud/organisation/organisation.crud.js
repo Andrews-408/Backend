@@ -69,7 +69,7 @@ async function UpdateOrganisation (req){
             runValidators: true
         })
         if(!user){
-            return { status: "success", message: "organisation not found" };
+            return { status: "fail", message: "organisation not found" };
         }
 
         return {
