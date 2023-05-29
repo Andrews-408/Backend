@@ -5,15 +5,18 @@ const morgan = require("morgan");
 const AppError = require('./Utils/appError')
 const globalErrorHandler = require('./controllers/errorController')
 
-const donorsRouter = require("./routes/donorsRouter");
+const router = require("./routes/router");
 const cors = require('cors')
 const app = express();
+
 
 
 // MIDDLEWARES
 app.use(morgan("dev"));
 app.use(express.json());
-app.use(cors())
+app.use(cors({origin: '*'}))
+
+
 
 app.use((req, res, next)=>{
     req.requestTime = new Date().toISOString();
@@ -21,7 +24,7 @@ app.use((req, res, next)=>{
 });
 
 // routes
-app.use("/api/caretoshare/donors", donorsRouter);
+app.use("/api/caretoshare", router);
 
 
 // handling unhandled routes

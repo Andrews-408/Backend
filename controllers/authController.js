@@ -26,7 +26,22 @@ const SendToken = (user, res, statusCode) => {
 // user sign up controller
 exports.signUp = (model) => { 
     return catchAsync (async (req, res, next) => {
-            const user = await model.create(req.body);
+            const user = await model.create({
+                email : req.body.email,
+                username: req.body.username,
+                password: req.body.password,
+                passwordConfirm: req.body.passwordConfirm,
+                role : req.body.role
+            });
+
+            if(user.role === "Admin" || user.role === "Donor" ){
+                user.isApproved = undefined;
+                user.isVerified = undefined;
+                await user.save({validateBeforeSave : false});
+            }
+
+
+
             SendToken(user, res, 201)
 
     }
@@ -47,6 +62,10 @@ exports.signIn = (model) => {
 
             if(!user || !(await user.correctPassword(password, user.password))){
                 return next(new AppError('Incorrect username or password',401))
+            }
+
+            if(!user.isActive){
+                return next(new AppError('Account is not active', 400))
             }
 
             SendToken(user, res, 201)
@@ -74,16 +93,16 @@ exports.protect = (model) => catchAsync(async(req, res, next)=>{
         const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET)
         
     //checking if user still exist
-        const freshUser = await model.findById(decoded.id)
-        if(!freshUser){
+        const currentUser = await model.findById(decoded.id)
+        if(!currentUser){
             return next(new AppError('User with this token does no longer exist', 401))
         }
     //check if user changed password after token was issued
-        if(freshUser.passwordChangedAfter(decoded.iat)){
-            return next( new AppError('User recently changed Password. Please log in again'))
+        if(currentUser.passwordChangedAfter(decoded.iat)){
+            return next( new AppError('User recently changed Password. Please log in again', 400))
         }
     // GRANT ACCESS TO PROTECTED ROUTE
-        req.user = freshUser;
+        req.user = currentUser;
         console.log(req.user)
         next()
 })
@@ -102,10 +121,10 @@ exports.forgotPassword = (model) => catchAsync(async (req,res,next)=>{
     const resetToken = user.createPasswordResetToken();
     await user.save({validateBeforeSave : false});
 
-    const resetURL = `${req.protocol}://${req.get('host')}/api/caretoshare/donors/resetPassword/${resetToken}`
+    //const resetURL = `${req.protocol}://${req.get('host')}/api/caretoshare/donors/resetPassword/${resetToken}`
     
-    const message = `Forgot password? Submit a Patch request with your new password and passwordConfirm to: 
-                     ${resetURL}.\nIf you didn't forget your password, please ignore this email`
+    // const message = `Forgot password? Submit a Patch request with your new password and passwordConfirm to: 
+    //                  ${resetURL}.\nIf you didn't forget your password, please ignore this email`
     try{
         await sendMail({
             email: user.email,
@@ -169,26 +188,3 @@ exports.deactivateUser = (model) => catchAsync( async (req, res, next)=>{
     SendToken(user, res, 204);
 })
 
-// exports.updatePassword = (model) => catchAsync( async(res, req, next)=> {
-//     // checks if user is logged in
-//     const currentUser = req.user
-//     const user = await model.findById(req.user._id).select('+password')
-
-//     // check if the provided current password is correct
-//     if(!(await user.correctPassword(req.body.currentPassword, user.password))){
-//         return next(new AppError('Your current password is incorrect', 401))
-//     }
-
-//     //If so, update password
-//     user.password = req.body.password;
-//     user.passwordConfirm = req.body.passwordConfirm
-//     await user.save();
-
-//     const token = SignToken(user._id);
-
-//     res.status(200).json({
-//         status: 'success',
-//         token
-//     });
-
-// })

@@ -1,13 +1,13 @@
 
-const Donors = require('../models/donorModel');
+const Users = require('../models/userModel');
 const ApiFeatures = require('../Utils/apiFeatures');
 const catchAsync = require('../Utils/catchAsync');
 const AppError = require('../Utils/appError');
 
 
-// creates a new donors 
+// creates a new donor
 exports.createDonor = catchAsync(async (req, res, next) => {
-		const newDonor = await Donors.create(req.body);
+		const newDonor = await Users.create(req.body);
 
 		
 		res.status(201).json({
@@ -25,7 +25,11 @@ exports.createDonor = catchAsync(async (req, res, next) => {
 // get all current donors from the database
 exports.getAllDonors = catchAsync (async (req, res, next) => {
 		// api filtering
-		const features = new ApiFeatures(Donors.find(),req.query).filter().sort().setFields()
+		const features = new ApiFeatures(
+			Users.find({role: "Donor"}), req.query)
+				.filter()
+				.sort()
+				.setFields()
 		const donors =  await features.query;
 
 		// responses
@@ -42,7 +46,7 @@ exports.getAllDonors = catchAsync (async (req, res, next) => {
 
 exports.getDonor = catchAsync( async (req, res, next) => {
 	
-		const donor = await Donors.findOne({username : req.params.username})
+		const donor = await Users.findOne({username : req.params.username, role: 'Donor'})
 
 		// adding 404 errors
 		if(!donor){
@@ -63,20 +67,27 @@ exports.getDonor = catchAsync( async (req, res, next) => {
 // update a donor details
 
 exports.updateDonor = catchAsync(async (req, res, next) => {
-	
-		const updatedDonor = await Donors.findOneAndUpdate({username: req.params.username}, req.body, {
+		const user = await Users.findOneAndUpdate({username: req.params.username}, req.body, {
 			new: true,
 			runValidators: true
 		})
 
-		if(!updatedDonor){
+		if(!user){
 			return next(new AppError('Username matches no donor', 404));
 		}
+		
+		// filter fields after donor updates 
+		user.mission = undefined;
+		user.organisationName = undefined;
+		user.isVerified = undefined;
+		user.isApproved = undefined;
+		user.businessCertificate = undefined;
+		await user.save({validateBeforeSave: false})
 
 		res.status(200).json({
 			status: "success",
 			data : {
-				updatedDonor
+				user
 			}
 	})
 	
@@ -86,7 +97,7 @@ exports.updateDonor = catchAsync(async (req, res, next) => {
 
 exports.deleteDonorAccount = catchAsync (async(req, res, next) => {
 	
-	const donor = await Donors.findOneAndDelete({username: req.params.username})
+	const donor = await Users.findOneAndDelete({username: req.params.username})
 	if(!donor){
 		return next(new AppError('Username matches no donor', 404));
 	}
