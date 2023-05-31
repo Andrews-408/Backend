@@ -29,4 +29,7 @@ router
  */
 router.use("/organisations", require('../controllers/organisationController'));
 
+// endpoints for donations
+router.use("/donations", require('../controllers/donationController'))
+
 module.exports = router;

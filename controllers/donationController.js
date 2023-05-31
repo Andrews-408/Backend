@@ -1,13 +1,23 @@
 const Users = require ('../models/donationModel');
-const ApiFeatures = require('../Utils/apiFeatures');
-const catchAsync = require('../Utils/catchAsync');
-const AppError = require('../Utils/appError');
 const express = require ("express")
 
-const { createNewDonation, getAllDonations,getDonationDetails,getUserDonation,updateDonationStatus} = require("../repository/crud/donation/donation.crud");
+const { createNewDonation, getAllDonations,getDonationDetails,getUserDonation,updateDonationStatus, updateDonation} = require("../repository/crud/donation/donation.crud");
 const router = express.Router();
 
 // create new  donation
+router.post('/', async(req, res, next) => {
+    try{
+        const result = await createNewDonation(req);
+        if(result.status === "success"){
+            return res.status(201).json(result)
+        }
+        return res.status(400).json(result)
+    }catch(error){
+        next(error)
+    }
+    
+})
+
 // get all donations
 router.get('/',async(req,res,next) => {
     try {
@@ -24,40 +34,56 @@ router.get('/',async(req,res,next) => {
     }
 })
  // get donation  details by donationId
-router.get("/:donatedId", authController.protect(Users),async(req,res,next) =>{
+router.get("/:donationId",async(req,res,next) =>{
     try {
-        const result = await getDonationDetails(req);{
-        result.status(200).json(result);
-        }
-        return res.status(400).json(result);
+            const result = await getDonationDetails(req);
+            if(result.status === "success"){
+                res.status(200).json(result)
+            }
+            res.status(400).json(result)
         }catch(error){
             next(error);
         }
 });
 
 //get user donation
-router.get("/:donatedBy",authController.protect(Users),async (req,res,next) =>{
+router.get("/:donatedBy/userDonation", async (req,res,next) =>{
     try{
         const result = await getUserDonation(req);
         if (result==="success"){
             return res.status(200).json(result);
         }
-    return res.status(400).json(result);
+        return res.status(400).json(result);
     }catch(error){
         next(error);   
      }
 });
 
 // update donation by donationId
-router.patch("/:donationId", async(req,res,next)=> {
+router.patch("/:donationId/updateStatus", async(req,res,next)=> {
     try{
         const result = await updateDonationStatus(req);
         if (result.status==="success"){
             return res.status(200).json(result)
         }
+        return res.status(400).json(result)
     }catch(error){
         next(error)
     }
 });
+
+router.patch("/:donationId/updateDonation", async(req,res, next) => {
+    try{
+        const result = await updateDonation(req);
+        if(result.status === "success"){
+            return res.status(200).json(result)
+        }
+        return res.status(400).json(result)
+    }catch(error){
+        next(error)
+    }
+})
+
+
 
 module.exports = router; 
