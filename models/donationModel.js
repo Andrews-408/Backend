@@ -19,7 +19,8 @@ const donationSchema = new mongoose.Schema({
         type : string
     },
     donationStatus: {
-        type: string
+        type: string,
+        default: ['pending...']
     },
     date: {
         type: Date,
