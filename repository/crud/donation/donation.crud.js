@@ -1,6 +1,32 @@
 const Donations = require("../../../models/donationModel");
 
 
+// create a new donation by user()
+async function createNewDonation(donatedBy,donationType,description,location)
+   try { 
+          const newDonation = new Donations({
+            donatedBy: donatedBy,
+            donationType,
+            description,
+            location
+          });
+        
+        const result = await newDonation.save();
+
+        return {
+            status: "success!",
+            message: "donatin created successfully",
+            data : result
+        };
+        }catch(err){
+            return{
+                status: "error",
+                message: "Failed to create new donation",
+                error: error.message
+            };
+        }
+        
+
 // get all donations
 async function getAllDonations(skip = 0, limit = 50) {
     const offset = skip * limit;

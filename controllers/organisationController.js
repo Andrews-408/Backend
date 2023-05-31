@@ -63,7 +63,7 @@ router.patch("/:username/approve-registration", authController.protect(Users), a
         next(error)
     }
 })
-
+//update organisation details
 router.patch("/:username", async(req, res, next)=> {
     try{
         const result = await UpdateOrganisation(req);
