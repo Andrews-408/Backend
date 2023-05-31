@@ -16,15 +16,11 @@ const donationSchema = new mongoose.Schema({
         required: [true,'Donor name required']
     },
     donatedTo : {
-        type : string
+        type : String
     },
     donationStatus: {
-        type: string,
-        default: ['pending...']
-    },
-    date: {
-        type: Date,
-        required:[false]
+        type: String,
+        default: 'pending'
     },
     description: {
         type: String,

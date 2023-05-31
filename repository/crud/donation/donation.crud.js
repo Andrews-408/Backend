@@ -2,29 +2,37 @@ const Donations = require("../../../models/donationModel");
 
 
 // create a new donation by user()
-async function createNewDonation(donatedBy,donationType,description,location)
+async function createNewDonation(req){
    try { 
-          const newDonation = new Donations({
-            donatedBy: donatedBy,
-            donationType,
-            description,
-            location
+          const newDonation = await Donations.create({
+            donatedBy: req.body.donatedBy,
+            donationId: req.body.donationId,
+            donationType: req.body.donationType,
+            description: req.body.description,
+            location: req.body.location,
+            itemPhoto: req.body.itemPhoto,
+            donatedTo : req.body.donatedTo
           });
-        
-        const result = await newDonation.save();
 
+        if(newDonation === null){
+            return {
+                status: 'failed',
+                message: 'unable to create donation'
+            }
+        }
         return {
             status: "success!",
-            message: "donatin created successfully",
-            data : result
+            message: "donation created successfully",
+            data : newDonation
         };
         }catch(err){
+            console.log(err)
             return{
                 status: "error",
-                message: "Failed to create new donation",
-                error: error.message
+                message: "An error occured, please try again later",
             };
         }
+    }
         
 
 // get all donations
@@ -41,7 +49,6 @@ async function getAllDonations(skip = 0, limit = 50) {
 }
 
 // get a donation by donationId
-
 async function getDonationDetails(req){
     try{
         const result = await Donations.findOne({donationId: req.params.donationId})
@@ -95,9 +102,33 @@ async function updateDonationStatus(req){
     }
 }
 
+//update donation
+
+async function updateDonation(req){
+    try{
+        const donation = await Donations.findOneAndUpdate({username: req.params.username}, req.body, {
+            new: true,
+            runValidators: true
+        });
+        if(donation === null){
+            return {status : "failed" , message : "Failed to update donation"}
+        }
+        return {
+            status : "success",
+            message : "donation updated successfully",
+            update : donation
+        }
+
+    }catch(error){
+        return {status : "error" , message: "an error occured, please try again"}
+    }
+}
+
 module.exports = {
     getAllDonations,
     getDonationDetails,
     getUserDonation,
-    updateDonationStatus
+    updateDonationStatus,
+    updateDonation,
+    createNewDonation
 }
