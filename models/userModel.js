@@ -83,6 +83,7 @@ const userSchema = new mongoose.Schema({
 	mission : {
 		type: String,
 	},
+	reviews : [string]
 }, { timestamps: true })
 
 
