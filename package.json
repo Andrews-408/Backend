@@ -21,6 +21,7 @@
     "nodemailer": "^6.9.1",
     "slugify": "^1.6.5",
     "superagent": "^8.0.9",
+    "twilio": "^4.11.2",
     "validator": "^13.9.0"
   },
   "devDependencies": {

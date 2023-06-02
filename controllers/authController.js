@@ -1,6 +1,7 @@
 const AppError = require("../Utils/appError");
 const catchAsync = require("../Utils/catchAsync");
 const sendMail = require("../Utils/email");
+const sendSMS = require("../Utils/sendSMS")
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto')
 const {promisify} = require('util')
@@ -127,6 +128,8 @@ exports.forgotPassword = (model) => catchAsync(async (req,res,next)=>{
             subject : 'Your password reset token (valid for 10min)',
             message : resetToken
         })
+
+        sendSMS();
         res.status(200).json({
             status: 'success',
             message : 'Token sent to email',
