@@ -121,15 +121,11 @@ exports.forgotPassword = (model) => catchAsync(async (req,res,next)=>{
     const resetToken = user.createPasswordResetToken();
     await user.save({validateBeforeSave : false});
 
-    //const resetURL = `${req.protocol}://${req.get('host')}/api/caretoshare/donors/resetPassword/${resetToken}`
-    
-    // const message = `Forgot password? Submit a Patch request with your new password and passwordConfirm to: 
-    //                  ${resetURL}.\nIf you didn't forget your password, please ignore this email`
     try{
         await sendMail({
             email: user.email,
             subject : 'Your password reset token (valid for 10min)',
-            message : `Reset Token: ${resetToken}`
+            message : resetToken
         })
         res.status(200).json({
             status: 'success',
@@ -159,6 +155,7 @@ exports.resetPassword = (model)=>catchAsync(async (req, res, next)=> {
                                         passwordResetToken : hashedToken, 
                                         passwordResetExpires : {$gt : Date.now()} 
                                     })
+    console.log(user)
 
     // checks if user exist and token not expired
     if(!user){

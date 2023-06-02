@@ -16,7 +16,8 @@ const sendEmail = async options => {
         from: 'Care To Share <yeboahandrews408@gmail.com>',
         to: options.email,
         subject: options.subject,
-        text : options.message
+        text : options.message,
+        html : `<p>Click <a href="http://localhost:3000/login/forgotPassword/resetPassword/${options.message}">here</a> to access the app and reset your password. If you didn't forget your password, please ignore this email </p>`
     }
 
 
