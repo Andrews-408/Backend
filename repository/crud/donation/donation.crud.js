@@ -106,7 +106,7 @@ async function updateDonationStatus(req){
 
 async function updateDonation(req){
     try{
-        const donation = await Donations.findOneAndUpdate({username: req.params.username}, req.body, {
+        const donation = await Donations.findOneAndUpdate({donatedBy: req.params.donatedBy}, req.body, {
             new: true,
             runValidators: true
         });
