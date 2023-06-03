@@ -38,6 +38,7 @@ exports.signUp = (model) => {
             if(user.role === "Admin" || user.role === "Donor" ){
                 user.isApproved = undefined;
                 user.isVerified = undefined;
+                user.reviews = undefined;
                 await user.save({validateBeforeSave : false});
             }
 
@@ -129,7 +130,7 @@ exports.forgotPassword = (model) => catchAsync(async (req,res,next)=>{
             message : resetToken
         })
 
-        sendSMS();
+        
         res.status(200).json({
             status: 'success',
             message : 'Token sent to email',
