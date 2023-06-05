@@ -1,12 +1,12 @@
 const Requests = require("../../../models/requestModel")
-const Users = require("../../../models/userModel")
+
 
 
 // create a new request by Organization
 
 async function createNewRequest(req){
     try{
-        const newRequest = await Requests.create({
+        const result = await Requests.create({
             requestId : req.body.requestId,
             requestedBy: req.body.requestedBy,
             requestType: req.body.requestType,
@@ -15,7 +15,7 @@ async function createNewRequest(req){
             requestStatus: req.body.requestStatus,
             requestImage: req.body.requestImage 
         })
-        if (newRequest === null ){
+        if (result === null ){
             return{
                 status: 'failed',
                 message: 'unable to create Request'
@@ -23,13 +23,11 @@ async function createNewRequest(req){
 
         }
         return{
-            status: 'success!',
-            message: 'request created successfully'
+            status: 'success',
+            message: 'request created successfully',
+            data : result
         };
-    }
-
-    
-    catch(err){
+    }catch(err){
         return {
             status: 'error',
             message: 'An error occurred, Please try again later'
@@ -38,20 +36,20 @@ async function createNewRequest(req){
     }
 };
 
-// Get One Request
-async function getOneRequest(req){
+// get requests from a particular organisation
+async function getOrganisationRequests(req){
     try{
-        const request = await Requests.findOne({requestedBy: req.params.requestedBy})
-        if (request === null){
+        const result = await Requests.find({requestedBy: req.params.requestedBy})
+        if (result === null){
             return{
                 status: "failed",
                 message: "No request found from this Organization"
             }
         }
         return{
-            status: "success!",
+            status: "success",
             message: "Request found",
-            data: request
+            data: result
         };
 
     }
@@ -66,13 +64,13 @@ async function getOneRequest(req){
     }
 };
 
-// Get all Organization requests
+// Get all Organisation requests
 async function getAllRequests(skip = 0, limit = 50){
     const offset = skip*limit;
     try{
         const requests = await Requests.find().skip(offset).limit(limit)
         return{
-            status:"success!",
+            status:"success",
             message: "Requests successfully loaded",
             results: requests.length,
             data: requests
@@ -89,11 +87,10 @@ async function getAllRequests(skip = 0, limit = 50){
 };
 
 // get Request details
-
 async function getRequestDetails(req){
     try{
-        const request = await Requests.findOne({requestId:req.params.requestId})
-        if (request === null){
+        const result = await Requests.findOne({requestId:req.params.requestId})
+        if (result === null){
             return{
                 status:"failed",
                 message: "no details for this request not found"
@@ -102,7 +99,7 @@ async function getRequestDetails(req){
         return {
             status : "success!",
             message: "request successfully found",
-            data: request
+            data: result
         };
     }
     catch(err)
@@ -125,8 +122,8 @@ async function updateRequestStatus(req){
             }
         }
         return{
-            status: "success!",
-            message: "Successfully updated request status"
+            status: "success",
+            message: "Successfully updated request status",
         };
     }
     catch(err){
@@ -151,7 +148,7 @@ async function updateRequest(req){
                 }
             }
             return{
-                status: "success!",
+                status: "success",
                 message: "Request updated successfully",
                 update: request
             };
@@ -191,13 +188,13 @@ async function deleteRequest(req){
     }
 };
 
-module.exports = [
+module.exports = {
     createNewRequest,
-    getOneRequest,
+    getOrganisationRequests,
     getAllRequests,
     getRequestDetails,
     updateRequest,
     updateRequestStatus,
     deleteRequest
-]
+}
 

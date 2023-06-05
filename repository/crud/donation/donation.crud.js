@@ -79,7 +79,7 @@ async function getDonationDetails(req){
 // get a user donation
 async function getUserDonation(req){
     try{
-        const result = await Donations.findOne({donatedBy: req.params.donatedBy})
+        const result = await Donations.find({donatedBy: req.params.donatedBy})
         if(result === null){
             return {status : "failed" , message: "No donation from this user"}
         }

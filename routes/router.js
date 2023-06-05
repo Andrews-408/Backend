@@ -32,4 +32,7 @@ router.use("/organisations", require('../controllers/organisationController'));
 // endpoints for donations
 router.use("/donations", require('../controllers/donationController'))
 
+// endpoints for requests
+router.use("/requests", require('../controllers/requestController'))
+
 module.exports = router;

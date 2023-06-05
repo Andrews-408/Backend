@@ -1,7 +1,7 @@
 
 const mongoose = require('mongoose');
 
-const requestSchema = new mongoose.schema({
+const requestSchema = new mongoose.Schema({
 
     requestId : {
         type: String,
@@ -21,7 +21,7 @@ const requestSchema = new mongoose.schema({
     },
     requestTo:{
         type: String,
-        required: [true,'Donor name is required']
+        required: [false,'']
     },
 
     description: {
@@ -30,7 +30,7 @@ const requestSchema = new mongoose.schema({
     },
     requestStatus: {
         type: String,
-        default: 'pending'
+        default: 'Pending'
     },
     requestImage:{
         type: String,
