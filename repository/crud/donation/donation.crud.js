@@ -38,12 +38,22 @@ async function createNewDonation(req){
 // get all donations
 async function getAllDonations(skip = 0, limit = 50) {
     const offset = skip * limit;
-    const result = await Donations.find().skip(offset).limit(limit);
-    return {
-        status: "success",
-        message: "successfully retrieved donations",
-        results : result.length,
-        data: result
+    try{
+        const result = await Donations.find().skip(offset).limit(limit);
+        return {
+            status: "success",
+            message: "successfully retrieved donations",
+            results : result.length,
+            data: result
+    
+    }
+   
+}
+    catch(err){
+        return{
+            status: "error",
+            message: "an error has occurred, please try again"
+        }
 
 }
 }
