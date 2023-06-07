@@ -42,6 +42,8 @@ exports.signUp = (model) => {
                 await user.save({validateBeforeSave : false});
             }
 
+            user.password = undefined;
+
 
 
             SendToken(user, res, 201)

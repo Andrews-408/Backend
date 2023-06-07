@@ -19,7 +19,7 @@ router
 
 router
 	.route("/donors/:username")
-	.get(authController.protect(Users),donorsController.getDonor)
+	.get(donorsController.getDonor)
 	.patch(donorsController.updateDonor)
 	.delete(authController.deactivateUser(Users))
 
