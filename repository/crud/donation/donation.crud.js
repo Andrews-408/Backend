@@ -21,7 +21,7 @@ async function createNewDonation(req){
             }
         }
         return {
-            status: "success!",
+            status: "success",
             message: "donation created successfully",
             data : newDonation
         };

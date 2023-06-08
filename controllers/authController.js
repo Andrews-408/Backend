@@ -68,8 +68,8 @@ exports.signIn = (model) => {
                 return next(new AppError('Incorrect username or password',401))
             }
 
-            if(!user.isActive){
-                return next(new AppError('Account is not active', 400))
+            if(!user.isActive || !user.isApproved){
+                return next(new AppError('Account is not active or approved', 400))
             }
 
             SendToken(user, res, 201)
