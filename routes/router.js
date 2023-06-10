@@ -17,11 +17,14 @@ router
 	.route("/donors/")
 	.get(donorsController.getAllDonors)
 
+
 router
 	.route("/donors/:username")
 	.get(donorsController.getDonor)
 	.patch(donorsController.updateDonor)
-	.delete(authController.deactivateUser(Users))
+
+router.route("/donors/:username/deactivateDonor").patch(donorsController.deleteDonorAccount)
+router.route("/donors/:username/activateDonor").patch(donorsController.activateDonorAccount)
 
 
 /**
