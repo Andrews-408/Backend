@@ -83,10 +83,48 @@ async function UpdateOrganisation (req){
         }
     }
 
+async function deactivateOrganisation(req){
+    try{
+        const result = await Users.updateOne(
+            {username: req.params.username} , {$set : {isActive : false}}
+        );
+        if (result.modifiedCount < 0) {
+            return { status: "fail", message: "fail to deactivate user" };
+        }
+        return {
+            status: "success",
+            message: "organisation's account has been deactivated",
+        }
+
+    }catch(error){
+        return {status : "error", message : "an error occured, please try again"}
+    }
+}
+
+async function activateOrganisation(req){
+    try{
+        const result = await Users.updateOne(
+            {username: req.params.username} , {$set : {isActive : true}}
+        );
+        if (result.modifiedCount < 0) {
+            return { status: "fail", message: "fail to activate user" };
+        }
+        return {
+            status: "success",
+            message: "organisation's account has been activated",
+        }
+
+    }catch(error){
+        return {status : "error", message : "an error occured, please try again"}
+    }
+}
+
 module.exports = {
     getAllOrganisations,
     getOrganisationDetails,
     updateOrganisationAsVerified,
     updateOrganisationAsApproved,
-    UpdateOrganisation
+    UpdateOrganisation,
+    deactivateOrganisation,
+    activateOrganisation
 }

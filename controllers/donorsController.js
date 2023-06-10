@@ -96,15 +96,36 @@ exports.updateDonor = catchAsync(async (req, res, next) => {
 // delete donor account
 
 exports.deleteDonorAccount = catchAsync (async(req, res, next) => {
-	
-	const donor = await Users.findOneAndDelete({username: req.params.username})
-	if(!donor){
-		return next(new AppError('Username matches no donor', 404));
+        const result = await Users.updateOne(
+            {username: req.params.username} , {$set : {isActive : false}}
+        );
+        if(result === null){
+			return next(new AppError('User not found', 404));
+		}
+
+		console.log(result)
+
+		res.status(204).json({
+			status: 'success',
+			message : 'successfully deactivated user'
+		})
+       
+}
+)
+
+exports.activateDonorAccount = catchAsync (async(req, res, next) => {
+	const result = await Users.updateOne(
+		{username: req.params.username} , {$set : {isActive : true}}
+	);
+	if(result === null){
+		return next(new AppError('User not found', 404));
 	}
+
 	res.status(204).json({
-		status: "Successfully deleted"
+		status: 'success',
+		message : 'successfully activated user'
 	})
-	
-	}
+   
+}
 )
 
