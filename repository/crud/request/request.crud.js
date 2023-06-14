@@ -112,9 +112,9 @@ async function getRequestDetails(req){
 }
 
 // Update Request status
-async function updateRequestStatus(req){
+async function approveRequest(req){
     try{
-    const result = await Requests.updateOne({requestId: req.params.requestId},{$set: {requestStatus:req.body.requestStatus}})
+    const result = await Requests.updateOne({requestId: req.params.requestId},{$set: {requestStatus:"In Progress"}})
         if (result === null){
             return{
                 status: "failed",
@@ -194,7 +194,7 @@ module.exports = {
     getAllRequests,
     getRequestDetails,
     updateRequest,
-    updateRequestStatus,
+    approveRequest,
     deleteRequest
 }
 

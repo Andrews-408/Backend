@@ -29,7 +29,7 @@ async function createNewDonation(req){
             console.log(err)
             return{
                 status: "error",
-                message: "An error occured, please try again later",
+                message: "An error occured, please try again",
             };
         }
     }
@@ -96,9 +96,26 @@ async function getUserDonation(req){
 
 
 // update donation status
-async function updateDonationStatus(req){
+async function acceptRequest(req){
     try{
-        const result = await Donations.updateOne({donationId : req.params.donationId}, {$set : {donationStatus : req.body.donationStatus}});
+        const result = await Donations.updateOne({donationId : req.params.donationId}, {$set : {donationStatus : "Completed"}});
+        if(result === null){
+            return {status : "failed" , message : "No donation found"}
+        }
+        return {
+            status : "success",
+            message : "donation updated successfully"
+        }
+
+    }catch(error){
+        return {status : "error" , message: "an error occured, please try again"}
+    }
+}
+
+// update donation status
+async function approveDonation(req){
+    try{
+        const result = await Donations.updateOne({donationId : req.params.donationId}, {$set : {donationStatus : "In Progress"}});
         if(result === null){
             return {status : "failed" , message : "No donation found"}
         }
@@ -138,7 +155,8 @@ module.exports = {
     getAllDonations,
     getDonationDetails,
     getUserDonation,
-    updateDonationStatus,
+    acceptRequest,
     updateDonation,
-    createNewDonation
+    createNewDonation,
+    approveDonation
 }

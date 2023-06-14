@@ -1,7 +1,7 @@
 const AppError = require("../Utils/appError");
 const catchAsync = require("../Utils/catchAsync");
 const sendMail = require("../Utils/email");
-const sendSMS = require("../Utils/sendSMS")
+//const sendSMS = require("../Utils/sendSMS")
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto')
 const {promisify} = require('util')
@@ -12,13 +12,13 @@ const SignToken = (id) => {
 
 const SendToken = (user, res, statusCode) => {
     const token = SignToken(user._id)
+   
 
     res.status(statusCode).json({
         status: 'success',
         token,
-        data : {
-            user
-        }
+        data: user,
+        role : user.role
     })
 
 }
@@ -46,7 +46,14 @@ exports.signUp = (model) => {
 
 
 
-            SendToken(user, res, 201)
+            res.status(201).json({
+                status: 'success',
+                data : {
+                    user
+                }
+            })
+        
+        
 
     }
     )
@@ -71,6 +78,8 @@ exports.signIn = (model) => {
             if(!user.isActive){
                 return next(new AppError('Account is not active or approved', 400))
             }
+
+            user.password = undefined;
 
             SendToken(user, res, 201)
 
