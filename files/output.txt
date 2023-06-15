@@ -1,2 +1,0 @@
-Hello world, I'm beginning with the project called backend in 30days.
-I believe in consistency, so should you. All is well.

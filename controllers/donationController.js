@@ -75,7 +75,7 @@ router.patch("/:donationId/acceptRequest", authController.protect(Users), async(
 });
 
 // approve donation by admin
-router.patch("/:donationId/approveDonation", authController.protect(Users), async(req,res,next)=> {
+router.patch("/:donationId/approveDonation",authController.protect(Users), authController.restrictTo('Admin'), async(req,res,next)=> {
     try{
         const result = await approveDonation(req);
         if (result.status==="success"){

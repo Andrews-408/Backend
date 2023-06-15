@@ -25,15 +25,15 @@ router
 
 router
 	.route("/donors/:username/updateDonor")
-	.patch(authController.protect(Users), donorsController.updateDonor)
+	.patch(authController.protect(Users), authController.restrictTo('Admin'),donorsController.updateDonor)
 
 router
 	.route("/donors/:username/deactivateDonor")
-	.patch(authController.protect(Users),donorsController.deleteDonorAccount)
+	.patch(authController.protect(Users),authController.restrictTo('Admin'),donorsController.deleteDonorAccount)
 
 router
 	.route("/donors/:username/activateDonor")
-	.patch(authController.protect(Users),donorsController.activateDonorAccount)
+	.patch(authController.protect(Users), authController.restrictTo('Admin'),donorsController.activateDonorAccount)
 
 
 /**

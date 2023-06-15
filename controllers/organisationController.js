@@ -41,7 +41,7 @@ router.get('/',authController.protect(Users), async (req, res, next) => {
 /**
  * mark organisation as verified
  */
-router.patch("/:username/mark-as-verified", authController.protect(Users), async (req, res, next) => {
+router.patch("/:username/mark-as-verified",authController.protect(Users),authController.restrictTo('Admin'), async (req, res, next) => {
     try {
         const result = await updateOrganisationAsVerified(req);
         if (result.status === "success") {
@@ -54,7 +54,7 @@ router.patch("/:username/mark-as-verified", authController.protect(Users), async
 });
 
 //authController.protect(Users),
-router.patch("/:username/approve-registration", authController.protect(Users), async(req, res, next) => {
+router.patch("/:username/approve-registration", authController.protect(Users), authController.restrictTo("Admin"), async(req, res, next) => {
     try {
         const result = await updateOrganisationAsApproved(req)
         if(result.status === "success"){
@@ -79,7 +79,7 @@ router.patch("/:username", async(req, res, next)=> {
     }
 })
 
-router.patch("/:username/deactivateOrganisation" , authController.protect(Users),async(req, res, next) => {
+router.patch("/:username/deactivateOrganisation" ,authController.protect(Users), authController.restrictTo('Admin') ,async(req, res, next) => {
     try{
         const result = await deactivateOrganisation(req);
         if(result.status === "success"){
@@ -92,7 +92,7 @@ router.patch("/:username/deactivateOrganisation" , authController.protect(Users)
     }
 })
 
-router.patch("/:username/activateOrganisation" ,authController.protect(Users), async(req, res, next) => {
+router.patch("/:username/activateOrganisation" ,authController.protect(Users), authController.restrictTo('Admin'),async(req, res, next) => {
     try{
         const result = await activateOrganisation(req);
         if(result.status === "success"){
