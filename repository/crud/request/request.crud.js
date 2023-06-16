@@ -13,7 +13,8 @@ async function createNewRequest(req){
             requestTo: req.body.requestTo,
             description: req.body.description,
             requestStatus: req.body.requestStatus,
-            requestImage: req.body.requestImage 
+            requestImage: req.body.requestImage,
+            contact : req.body.contact
         })
         if (result === null ){
             return{
