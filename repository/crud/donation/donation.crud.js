@@ -76,24 +76,6 @@ async function getDonationDetails(req){
 }
 
 
-// get a user donation
-async function getUserDonation(req){
-    try{
-        const result = await Donations.find({donatedBy: req.params.donatedBy})
-        if(result === null){
-            return {status : "failed" , message: "No donation from this user"}
-        }
-        return {
-            status : "success",
-            message: "donations found",
-            data : result
-        }
-    }catch(error){
-        return {status : "error" , message : "an error occured, please try again"}
-    }
-};
-
-
 
 // update donation status
 async function acceptRequest(req){
@@ -154,7 +136,6 @@ async function updateDonation(req){
 module.exports = {
     getAllDonations,
     getDonationDetails,
-    getUserDonation,
     acceptRequest,
     updateDonation,
     createNewDonation,
