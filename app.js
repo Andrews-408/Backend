@@ -1,6 +1,7 @@
 
 const express = require("express");
 const morgan = require("morgan");
+const cookieParser = require('cookie-parser');
 
 const AppError = require('./Utils/appError')
 const globalErrorHandler = require('./controllers/errorController')
@@ -14,6 +15,7 @@ const app = express();
 // MIDDLEWARES
 app.use(morgan("dev"));
 app.use(express.json());
+app.use(cookieParser())
 app.use(cors({origin: '*'}))
 
 

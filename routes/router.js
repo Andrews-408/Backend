@@ -20,11 +20,20 @@ router
 
 router
 	.route("/donors/:username")
-	.get(donorsController.getDonor)
+	.get(authController.protect(Users),donorsController.getDonor)
 	.patch(donorsController.updateDonor)
 
-router.route("/donors/:username/deactivateDonor").patch(donorsController.deleteDonorAccount)
-router.route("/donors/:username/activateDonor").patch(donorsController.activateDonorAccount)
+router
+	.route("/donors/:username/updateDonor")
+	.patch(authController.protect(Users), authController.restrictTo('Admin'),donorsController.updateDonor)
+
+router
+	.route("/donors/:username/deactivateDonor")
+	.patch(authController.protect(Users),authController.restrictTo('Admin'),donorsController.deleteDonorAccount)
+
+router
+	.route("/donors/:username/activateDonor")
+	.patch(authController.protect(Users), authController.restrictTo('Admin'),donorsController.activateDonorAccount)
 
 
 /**
