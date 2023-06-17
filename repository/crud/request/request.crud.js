@@ -153,8 +153,8 @@ async function acceptRequest(req){
 
 async function updateRequest(req){
     try{
-        const request = await Requests.findOneAndUpdate({requestId: req.params.requestId},req.body,
-            {new:true,runValidators: true});
+            const request = await Requests.updateOne({requestId: req.params.requestId}, req.body,
+                {new:true,runValidators: true});
 
             if (request === null){
                 return { 

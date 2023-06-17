@@ -64,7 +64,7 @@ router.get('/:requestId', async(req,res,next) => {
 });
 
 // Controller for UpdateRequest 
-router.patch('/:requestId', async(req,res,next) => {
+router.patch('/:requestId/updateRequest', async(req,res,next) => {
     try {
         const result = await updateRequest(req);
         if (result === "success"){
