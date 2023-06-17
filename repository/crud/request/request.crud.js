@@ -6,15 +6,7 @@ const Requests = require("../../../models/requestModel")
 
 async function createNewRequest(req){
     try{
-        const result = await Requests.create({
-            requestId : req.body.requestId,
-            requestedBy: req.body.requestedBy,
-            requestType: req.body.requestType,
-            requestTo: req.body.requestTo,
-            description: req.body.description,
-            requestStatus: req.body.requestStatus,
-            requestImage: req.body.requestImage 
-        })
+        const result = await Requests.create(req.body)
         if (result === null ){
             return{
                 status: 'failed',
@@ -134,12 +126,35 @@ async function approveRequest(req){
     }
 };
 
+// Update Request status
+async function acceptRequest(req){
+    try{
+    const result = await Requests.updateOne({requestId: req.params.requestId},{$set: {requestStatus:"Completed"}})
+        if (result === null){
+            return{
+                status: "failed",
+                message: "Failed to update request status"
+            }
+        }
+        return{
+            status: "success",
+            message: "Successfully updated request status",
+        };
+    }
+    catch(err){
+        return{
+            status: "error",
+            message: "Failed to update status, please try again"
+        }
+    }
+};
+
 // update Request 
 
 async function updateRequest(req){
     try{
-        const request = await Requests.findOneAndUpdate({requestId: req.params.requestId},req.body,
-            {new:true,runValidators: true});
+            const request = await Requests.updateOne({requestId: req.params.requestId}, req.body,
+                {new:true,runValidators: true});
 
             if (request === null){
                 return { 
@@ -195,6 +210,7 @@ module.exports = {
     getRequestDetails,
     updateRequest,
     approveRequest,
+    acceptRequest,
     deleteRequest
 }
 

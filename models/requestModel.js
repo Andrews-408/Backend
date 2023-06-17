@@ -14,7 +14,6 @@ const requestSchema = new mongoose.Schema({
         required: [true, 'Requester name is required ']
         
     },
-
     requestType: {
         type: String,
         required: [true,'Request type is required']

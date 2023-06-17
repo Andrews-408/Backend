@@ -1,5 +1,7 @@
 const express = require('express')
-const { createNewRequest,getOrganisationRequests,getAllRequests,getRequestDetails,updateRequest,approveRequest,deleteRequest} =require("../repository/crud/request/request.crud")
+const { createNewRequest,getOrganisationRequests,getAllRequests,
+    getRequestDetails,updateRequest,approveRequest,deleteRequest, 
+    acceptRequest} =require("../repository/crud/request/request.crud")
 const router = express.Router()
 const Users = require('../models/userModel');
 const authController = require("./authController");
@@ -62,7 +64,7 @@ router.get('/:requestId', async(req,res,next) => {
 });
 
 // Controller for UpdateRequest 
-router.patch('/:requestId', async(req,res,next) => {
+router.patch('/:requestId/updateRequest', async(req,res,next) => {
     try {
         const result = await updateRequest(req);
         if (result === "success"){
@@ -80,6 +82,19 @@ router.patch('/:requestId', async(req,res,next) => {
 router.patch("/:requestId/approveRequest", authController.protect(Users), async(req,res,next)=> {
     try{
         const result = await approveRequest(req);
+        if (result.status==="success"){
+            return res.status(200).json(result)
+        }
+        return res.status(400).json(result)
+    }catch(error){
+        next(error)
+    }
+});
+
+// update requestStatus by requestId
+router.patch("/:requestId/acceptRequest", authController.protect(Users), async(req,res,next)=> {
+    try{
+        const result = await acceptRequest(req);
         if (result.status==="success"){
             return res.status(200).json(result)
         }
