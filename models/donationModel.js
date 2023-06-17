@@ -22,13 +22,17 @@ const donationSchema = new mongoose.Schema({
         type: String,
         default: 'Pending'
     },
+    contact : {
+        type: String,
+        required: true
+    },
     description: {
         type: String,
         required:[false]
     },
     itemPhoto: {
         type: String,
-        required:[true, "Upload images of the items u are donating"]
+        required:[false, "Upload images of the items u are donating"]
     },
     location :{
         type : String,

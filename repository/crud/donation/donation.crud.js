@@ -11,7 +11,8 @@ async function createNewDonation(req){
             description: req.body.description,
             location: req.body.location,
             itemPhoto: req.body.itemPhoto,
-            donatedTo : req.body.donatedTo
+            donatedTo : req.body.donatedTo,
+            contact : req.body.contact
           });
 
         if(newDonation === null){
@@ -78,9 +79,10 @@ async function getDonationDetails(req){
 
 
 // update donation status
-async function acceptRequest(req){
+async function acceptDonation(req){
     try{
-        const result = await Donations.updateOne({donationId : req.params.donationId}, {$set : {donationStatus : "Completed"}});
+        const result = await Donations.updateOne({donationId : req.params.donationId}, 
+            {$set : {donationStatus : "Completed"} , });
         if(result === null){
             return {status : "failed" , message : "No donation found"}
         }
@@ -115,7 +117,7 @@ async function approveDonation(req){
 
 async function updateDonation(req){
     try{
-        const donation = await Donations.findOneAndUpdate({donatedBy: req.params.donatedBy}, req.body, {
+        const donation = await Donations.findOneAndUpdate({donationId: req.params.donationId}, req.body, {
             new: true,
             runValidators: true
         });
@@ -136,7 +138,7 @@ async function updateDonation(req){
 module.exports = {
     getAllDonations,
     getDonationDetails,
-    acceptRequest,
+    acceptDonation,
     updateDonation,
     createNewDonation,
     approveDonation

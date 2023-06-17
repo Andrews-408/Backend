@@ -3,7 +3,7 @@ const authController = require("./authController");
 const Users = require("../models/userModel")
 
 const { createNewDonation, getAllDonations, getDonationDetails,
-    acceptRequest, updateDonation, approveDonation } = require("../repository/crud/donation/donation.crud");
+    acceptDonation, updateDonation, approveDonation } = require("../repository/crud/donation/donation.crud");
 const router = express.Router();
 
 // create new  donation
@@ -50,10 +50,10 @@ router.get("/:donationId", async (req, res, next) => {
 
 
 
-// accept request from organisation
-router.patch("/:donationId/acceptRequest", authController.protect(Users), async (req, res, next) => {
+// accept donation
+router.patch("/:donationId/acceptDonation", authController.protect(Users), async (req, res, next) => {
     try {
-        const result = await acceptRequest(req);
+        const result = await acceptDonation(req);
         if (result.status === "success") {
             return res.status(200).json(result)
         }
