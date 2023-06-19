@@ -64,7 +64,7 @@ async function updateOrganisationAsApproved(req){
 
 async function UpdateOrganisation (req){
     try{
-        const user = await Users.findOneAndUpdate({username: req.params.username}, req.body, {
+        const user = await Users.findOneAndUpdate({username: req.params.username, role: "Organisation"}, req.body, {
             new: true,
             runValidators: true
         })
