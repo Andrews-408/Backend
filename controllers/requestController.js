@@ -6,8 +6,7 @@ const router = express.Router()
 const Users = require('../models/userModel');
 const authController = require("./authController");
 
-// Controller for createNewRequest
-
+// creates new request
 router.post('/', async(req,res,next) => {
     try{
         const result = await createNewRequest(req);
@@ -21,7 +20,7 @@ router.post('/', async(req,res,next) => {
     }
 });
 
-// get all Requests Controller
+// get all Requests 
 router.get('/', authController.protect(Users),async(req,res,next) => {
     try {
         const result = await getAllRequests(req.params.skip, req.params.limit);
@@ -105,7 +104,6 @@ router.patch("/:requestId/acceptRequest", authController.protect(Users), async(r
 });
 
 // Controller for deleteRequest
-
 router.delete('/:requestId',async(req,res,next) => {
 
     try {

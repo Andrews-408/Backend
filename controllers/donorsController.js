@@ -5,24 +5,9 @@ const catchAsync = require('../Utils/catchAsync');
 const AppError = require('../Utils/appError');
 
 
-// creates a new donor
-exports.createDonor = catchAsync(async (req, res, next) => {
-		const newDonor = await Users.create(req.body);
-
-		
-		res.status(201).json({
-			status: 'success',
-			data : {
-				newDonor
-			}
-		});
-	
-	}
-)
 
 
-
-// get all current donors from the database
+// get all current donors 
 exports.getAllDonors = catchAsync (async (req, res, next) => {
 		// api filtering
 		const features = new ApiFeatures(
@@ -43,12 +28,11 @@ exports.getAllDonors = catchAsync (async (req, res, next) => {
 })
 
 // finds a specific donor by username
-
 exports.getDonor = catchAsync( async (req, res, next) => {
 	
 		const donor = await Users.findOne({username : req.params.username, role: 'Donor'})
 
-		// adding 404 errors
+		// returns an error when user is not found
 		if(!donor){
 			return next(new AppError('Username matches no donor', 404));
 		}
@@ -64,8 +48,7 @@ exports.getDonor = catchAsync( async (req, res, next) => {
 	
 
 
-// update a donor details
-
+// update a donor details/sets up donor profile
 exports.updateDonor = catchAsync(async (req, res, next) => {
 		const user = await Users.findOneAndUpdate({username: req.params.username}, req.body, {
 			new: true,
@@ -93,9 +76,8 @@ exports.updateDonor = catchAsync(async (req, res, next) => {
 	
 })
 
-// delete donor account
-
-exports.deleteDonorAccount = catchAsync (async(req, res, next) => {
+// deactivate donor account
+exports.deActivateDonorAccount = catchAsync (async(req, res, next) => {
         const result = await Users.updateOne(
             {username: req.params.username} , {$set : {isActive : false}}
         );

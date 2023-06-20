@@ -29,7 +29,7 @@ router
 
 router
 	.route("/donors/:username/deactivateDonor")
-	.patch(authController.protect(Users),authController.restrictTo('Admin'),donorsController.deleteDonorAccount)
+	.patch(authController.protect(Users),authController.restrictTo('Admin'),donorsController.deActivateDonorAccount)
 
 router
 	.route("/donors/:username/activateDonor")

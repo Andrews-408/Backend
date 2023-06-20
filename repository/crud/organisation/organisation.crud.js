@@ -28,6 +28,26 @@ async function getOrganisationDetails(req) {
     }
 }
 
+async function addReviews(req){
+    try{
+        const user = await Users.findOne({username: req.params.username, role: 'Organisation'})
+        if(user === null){
+            return {
+                status:"failed",
+                message : "Organisation not found"
+            }
+        }
+        user.reviews.push(req.body.review)
+        await user.save({validateBeforeSave : false});
+        return {
+            status: "success",
+            message: "successfully reviewed organisation"
+        }
+    }catch(error){
+        return { status: "error", message: "an error occurred, please try again"}
+    }
+}
+
 async function updateOrganisationAsVerified(req) {
     try {
         const result = await Users.updateOne(
@@ -64,7 +84,7 @@ async function updateOrganisationAsApproved(req){
 
 async function UpdateOrganisation (req){
     try{
-        const user = await Users.findOneAndUpdate({username: req.params.username}, req.body, {
+        const user = await Users.findOneAndUpdate({username: req.params.username, role: "Organisation"}, req.body, {
             new: true,
             runValidators: true
         })
@@ -126,5 +146,6 @@ module.exports = {
     updateOrganisationAsApproved,
     UpdateOrganisation,
     deactivateOrganisation,
-    activateOrganisation
+    activateOrganisation,
+    addReviews
 }

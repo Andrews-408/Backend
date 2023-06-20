@@ -6,10 +6,13 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto')
 const {promisify} = require('util')
 
+// signs token for authentication
 const SignToken = (id) => { 
      return jwt.sign({id}, process.env.JWT_SECRET, {expiresIn : process.env.JWT_EXPIRY})
 }
 
+
+// function for sending token
 const SendToken = (user, res, statusCode) => {
     const token = SignToken(user._id)
    
@@ -44,8 +47,6 @@ exports.signUp = (model) => {
 
             user.password = undefined;
 
-
-
             res.status(201).json({
                 status: 'success',
                 data : {
@@ -64,7 +65,8 @@ exports.signUp = (model) => {
 exports.signIn = (model) => {
         return catchAsync(async (req, res, next) =>{
             const {username, password} = req.body
-    
+            
+            // checks if username and password are provided
             if(!username || !password){
                 return next(new AppError('Provide username and password', 400 ))
             }
@@ -75,12 +77,16 @@ exports.signIn = (model) => {
                 return next(new AppError('Incorrect username or password',401))
             }
 
+            // checks if user account is active
             if(!user.isActive){
                 return next(new AppError('Account is not active or approved', 400))
             }
 
+            // removes user's password from response
             user.password = undefined;
 
+
+            // sends token
             SendToken(user, res, 201)
 
         })}
@@ -93,30 +99,33 @@ exports.signIn = (model) => {
 // protecting routes
 
 exports.protect = (model) => catchAsync(async(req, res, next)=>{
+
     // get token and check if it's there
         let token;
         if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
             token = req.headers.authorization.split(' ')[1]
-        }
-        
+        };
+
+    // checks validity of the token
         if(!token){
             return next(new AppError('You are not logged in.Please Log in to get access', 401))
-        }
-    // verifying token
-        const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET)
+        };
+
+    // verifying token/ decodes token
+        const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
         
     //checking if user still exist
         const currentUser = await model.findById(decoded.id)
         if(!currentUser){
             return next(new AppError('User with this token does no longer exist', 401))
-        }
+        };
+
     //check if user changed password after token was issued
         if(currentUser.passwordChangedAfter(decoded.iat)){
             return next( new AppError('User recently changed Password. Please log in again', 400))
-        }
-    // GRANT ACCESS TO PROTECTED ROUTE
+        };
+    // grants access to protected routes
         req.user = currentUser;
-        console.log(req.user)
         next()
 })
 
@@ -132,45 +141,47 @@ exports.restrictTo = (...roles) => {
 }
 
 // resetToken mailing controller
-
 exports.forgotPassword = (model) => catchAsync(async (req,res,next)=>{
-    // get user based on posted email
+
+    // query for user using their email
     const user = await model.findOne({email : req.body.email});
+
+    // checks if user exists
     if(!user){
         next(new AppError('There is no user with the provided email address', 404))
     }
 
-    // generate the random reset token
+    // generates the resetToken
     const resetToken = user.createPasswordResetToken();
     await user.save({validateBeforeSave : false});
 
+    // sends password reset link to user via email
     try{
         await sendMail({
             email: user.email,
             subject : 'Your password reset token (valid for 10min)',
             message : resetToken
-        })
+        });
 
-        
         res.status(200).json({
             status: 'success',
             message : 'Token sent to email',
             data : {
                 user
             }
-        })
+        });
+
     }catch(err){
         user.passwordResetToken = undefined
         user.passwordResetExpires = undefined
         await user.save({validateBeforeSave : false});
         next( new AppError('There was an error sending email. Try again later!', 500))
     }
-    
 });
 
 // reset password controller
 exports.resetPassword = (model)=>catchAsync(async (req, res, next)=> {
-    // get user based on the token
+    // get user using the resetToken
     const hashedToken = crypto
                             .createHash('sha256')
                             .update(req.params.token)
@@ -179,8 +190,7 @@ exports.resetPassword = (model)=>catchAsync(async (req, res, next)=> {
     const user = await model.findOne({
                                         passwordResetToken : hashedToken, 
                                         passwordResetExpires : {$gt : Date.now()} 
-                                    })
-    console.log(user)
+                                    });
 
     // checks if user exist and token not expired
     if(!user){
@@ -192,21 +202,6 @@ exports.resetPassword = (model)=>catchAsync(async (req, res, next)=> {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save();
-
-    //update changedPasswordAT property for the user
-
-    //log the user in, send JWT
-    SendToken(user, res, 200)
-
 }) 
 
-// delete user
-exports.deactivateUser = (model) => catchAsync( async (req, res, next)=>{
-    const user = await model.findOneAndUpdate({username: req.params.username}, {isActive : false}, {
-        new: true,
-        runValidators: true
-    })
-
-    SendToken(user, res, 204);
-})
 

@@ -1,9 +1,9 @@
 const express = require("express")
 const authController = require("./authController");
 const Users = require("../models/userModel")
-
 const { createNewDonation, getAllDonations, getDonationDetails,
     acceptDonation, updateDonation, approveDonation } = require("../repository/crud/donation/donation.crud");
+
 const router = express.Router();
 
 // create new  donation
@@ -14,7 +14,7 @@ router.post('/', authController.protect(Users), async (req, res, next) => {
             return res.status(201).json(result)
         }
         return res.status(400).json(result)
-    } catch (error) {
+    }catch (error) {
         next(error)
     }
 
@@ -35,6 +35,7 @@ router.get('/', async (req, res, next) => {
         next(error);
     }
 })
+
 // get donation  details by donationId
 router.get("/:donationId", async (req, res, next) => {
     try {
@@ -50,7 +51,7 @@ router.get("/:donationId", async (req, res, next) => {
 
 
 
-// accept donation
+// accept donation by donor
 router.patch("/:donationId/acceptDonation", authController.protect(Users), async (req, res, next) => {
     try {
         const result = await acceptDonation(req);
@@ -76,8 +77,7 @@ router.patch("/:donationId/approveDonation", authController.protect(Users), auth
     }
 });
 
-//
-
+//updates donation by donationId
 router.patch("/:donationId/updateDonation", async (req, res, next) => {
     try {
         const result = await updateDonation(req);
@@ -89,7 +89,6 @@ router.patch("/:donationId/updateDonation", async (req, res, next) => {
         next(error)
     }
 })
-
 
 
 module.exports = router; 
