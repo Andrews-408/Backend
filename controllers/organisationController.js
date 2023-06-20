@@ -65,7 +65,7 @@ router.patch("/:username/mark-as-verified",authController.protect(Users),authCon
     }
 });
 
-//authController.protect(Users),
+//approve organisation registration
 router.patch("/:username/approve-registration", authController.protect(Users), authController.restrictTo("Admin"), async(req, res, next) => {
     try {
         const result = await updateOrganisationAsApproved(req)

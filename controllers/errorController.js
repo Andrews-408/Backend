@@ -62,7 +62,6 @@ module.exports = (err,req,res,next)=>{
         if(error.name === 'ValidationError') error = handleValidationError(error)
         if(error.name=== 'JsonWebTokenError') error = handleJWTerror()
         if(error.name === 'TokenExpiredError') error = handleExpiredError()
-
         sendErrProd(error, res);
     }
 
