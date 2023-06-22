@@ -82,6 +82,12 @@ exports.signIn = (model) => {
                 return next(new AppError('Account is not active or approved', 400))
             }
 
+
+
+            if(!user.isApproved && user.role === "Organisation"){
+                return next(new AppError('Registration is not approved', 400))
+            }
+
             // removes user's password from response
             user.password = undefined;
 
