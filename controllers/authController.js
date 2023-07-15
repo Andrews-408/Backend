@@ -39,7 +39,6 @@ exports.signUp = (model) => {
             });
 
             if(user.role === "Admin" || user.role === "Donor" ){
-                user.isApproved = undefined;
                 user.isVerified = undefined;
                 user.reviews = undefined;
                 await user.save({validateBeforeSave : false});
@@ -80,12 +79,6 @@ exports.signIn = (model) => {
             // checks if user account is active
             if(!user.isActive){
                 return next(new AppError('Account is not active or approved', 400))
-            }
-
-
-
-            if(!user.isApproved && user.role === "Organisation"){
-                return next(new AppError('Registration is not approved', 400))
             }
 
             // removes user's password from response

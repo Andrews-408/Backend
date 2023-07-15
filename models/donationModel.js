@@ -20,7 +20,7 @@ const donationSchema = new mongoose.Schema({
     },
     donationStatus: {
         type: String,
-        default: 'Pending'
+        default: 'In Progress'
     },
     contact : {
         type: String,

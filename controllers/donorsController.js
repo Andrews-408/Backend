@@ -63,7 +63,6 @@ exports.updateDonor = catchAsync(async (req, res, next) => {
 		user.mission = undefined;
 		user.organisationName = undefined;
 		user.isVerified = undefined;
-		user.isApproved = true;
 		user.businessCertificate = undefined;
 		await user.save({validateBeforeSave: false})
 

@@ -69,10 +69,6 @@ const userSchema = new mongoose.Schema({
 		type: String,
 		required: [false , 'Organisation name is required']
 	},
-	isApproved: {
-		type: Boolean,
-		default: false
-	},
 	isVerified : {
 		type: Boolean,
 		default: false
