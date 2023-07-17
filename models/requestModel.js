@@ -29,7 +29,7 @@ const requestSchema = new mongoose.Schema({
     },
     requestStatus: {
         type: String,
-        default: 'Pending'
+        default: 'In Progress'
     },
     requestImage:{
         type: String,

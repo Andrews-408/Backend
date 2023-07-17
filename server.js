@@ -5,6 +5,7 @@ const app = require("./app");
 
 
 
+
 dotenv.config({path:"./config.env"});
 
 
@@ -16,6 +17,8 @@ mongoose
 
 	})
 	.then(() =>console.log("Database connection successful!"));
+
+
 
 
 const port = 8080;

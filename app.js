@@ -1,4 +1,3 @@
-
 const express = require("express");
 const morgan = require("morgan");
 const cookieParser = require('cookie-parser');
@@ -9,6 +8,8 @@ const globalErrorHandler = require('./controllers/errorController')
 const router = require("./routes/router");
 const cors = require('cors')
 const app = express();
+const schedule = require('node-schedule')
+const {verifyOrganisations} = require("./Utils/sentimentAnalyser")
 
 
 
@@ -25,8 +26,14 @@ app.use((req, res, next)=>{
     next();
 });
 
+
+// Schedule the verification function to run every day at 12am
+const verificationSchedule = schedule.scheduleJob('0 0 * * *', verifyOrganisations);
+
+
 // routes
 app.use("/api/caretoshare", router);
+
 
 
 // handling unhandled routes
