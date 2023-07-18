@@ -7,7 +7,7 @@ const Users = require('../models/userModel');
 const authController = require("./authController");
 
 // creates new request
-router.post('/', async(req,res,next) => {
+router.post('/', authController.protect(Users),async(req,res,next) => {
     try{
         const result = await createNewRequest(req);
             if (result.status == "success"){
@@ -34,7 +34,7 @@ router.get('/', authController.protect(Users),async(req,res,next) => {
 });
 
 // get requests from a particular organisation
-router.get('/:requestedBy/organisationRequests', authController.protect(Users),async(req,res,next) => {
+router.get('/:organisationName/organisationRequests', authController.protect(Users),async(req,res,next) => {
     try {
         const result = await getOrganisationRequests(req);
     {

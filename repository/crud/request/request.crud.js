@@ -20,6 +20,7 @@ async function createNewRequest(req){
             data : result
         };
     }catch(err){
+        console.log(err)
         return {
             status: 'error',
             message: 'An error occurred, Please try again later'
@@ -31,7 +32,7 @@ async function createNewRequest(req){
 // get requests from a particular organisation
 async function getOrganisationRequests(req){
     try{
-        const result = await Requests.find({requestedBy: req.params.requestedBy})
+        const result = await Requests.find({organisationName: req.params.organisationName})
         if (result === null){
             return{
                 status: "failed",
@@ -81,7 +82,7 @@ async function getAllRequests(skip = 0, limit = 50){
 // get Request details
 async function getRequestDetails(req){
     try{
-        const result = await Requests.findOne({requestId:req.params.requestId})
+        const result = await Requests.findOne({campaignId:req.params.campaignId})
         if (result === null){
             return{
                 status:"failed",
