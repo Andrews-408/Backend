@@ -37,7 +37,7 @@ async function addReviews(req){
                 message : "Organisation not found"
             }
         }
-        user.reviews.push(req.body.review)
+        user.reviews.push(req.body)
         await user.save({validateBeforeSave : false});
         return {
             status: "success",
