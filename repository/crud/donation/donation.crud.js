@@ -7,10 +7,13 @@ async function createNewDonation(req){
           const newDonation = await Donations.create({
             donatedBy: req.body.donatedBy,
             donationId: req.body.donationId,
-            donationType: req.body.donationType,
+            campaignId: req.body.campaignId,
+            donorEmail: req.body.donorEmail,
+            organisationEmail: req.body.organisationEmail,
             description: req.body.description,
             location: req.body.location,
             itemPhoto: req.body.itemPhoto,
+            quantity: req.body.quantity,
             donatedTo : req.body.donatedTo,
             contact : req.body.contact
           });
@@ -35,7 +38,24 @@ async function createNewDonation(req){
         }
     }
         
-
+// get donations for a campaign 
+async function getCampaignDonations(req){
+    try{
+        const result = await Donations.find({campaignId: req.params.campaignId});
+        return {
+            status: "success",
+            message: "successfully retrieved donations",
+            results : result.length,
+            data: result
+            }
+        }
+        catch(err){
+            return{
+            status: "error",
+            message: "an error has occurred, please try again"
+        } 
+}
+}
 // get all donations
 async function getAllDonations(skip = 0, limit = 50) {
     const offset = skip * limit;
@@ -141,5 +161,6 @@ module.exports = {
     acceptDonation,
     updateDonation,
     createNewDonation,
-    approveDonation
+    approveDonation,
+    getCampaignDonations
 }

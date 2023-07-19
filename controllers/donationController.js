@@ -2,7 +2,7 @@ const express = require("express")
 const authController = require("./authController");
 const Users = require("../models/userModel")
 const { createNewDonation, getAllDonations, getDonationDetails,
-    acceptDonation, updateDonation, approveDonation } = require("../repository/crud/donation/donation.crud");
+    acceptDonation, updateDonation, approveDonation, getCampaignDonations } = require("../repository/crud/donation/donation.crud");
 
 const router = express.Router();
 
@@ -19,6 +19,21 @@ router.post('/', authController.protect(Users), async (req, res, next) => {
     }
 
 })
+
+//get all donations for a specific campaign
+router.get('/:campaignId', async (req, res, next) => {
+    try {
+        const result = await getCampaignDonations(req);
+        if (result.status === "success") {
+            return res.status(200).json(result);
+        }
+        return res.status(400).json(result);
+    }
+    catch (error) {
+        next(error);
+    }
+})
+
 
 // get all donations
 router.get('/', async (req, res, next) => {

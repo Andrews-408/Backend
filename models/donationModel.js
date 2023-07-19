@@ -1,18 +1,26 @@
 const mongoose = require('mongoose');
 
 const donationSchema = new mongoose.Schema({
-    donationType : {
-        type: String,
-        required:[true,'Specify the type of donation']
-    },
     donationId : {
         type :String,
         required: [true,'Donation ID is required'],
         unique : true
     },
+    campaignId : {
+        type: String,
+        required: [true, "Campaign ID is required"]
+    },
     donatedBy :{
         type : String,
         required: [true,'Donor name required']
+    },
+    donorEmail : {
+        type: String,
+        required: [true, "Donor Email is required"]
+    },
+    organisationEmail : {
+        type: String,
+        required: [true, "Organisation Email is required"]
     },
     donatedTo : {
         type : String,
@@ -29,6 +37,10 @@ const donationSchema = new mongoose.Schema({
     description: {
         type: String,
         required:[false]
+    },
+    quantity : {
+        type: Number, 
+        required : [true]
     },
     itemPhoto: {
         type: String,
