@@ -98,7 +98,7 @@ async function getDonationDetails(req){
 
 
 
-// update donation status
+// accept donation
 async function acceptDonation(req){
     try{
         const result = await Donations.updateOne({donationId : req.params.donationId}, 
@@ -108,7 +108,7 @@ async function acceptDonation(req){
         }
         return {
             status : "success",
-            message : "donation updated successfully"
+            message : "Donation accepted successfully"
         }
 
     }catch(error){
@@ -116,16 +116,17 @@ async function acceptDonation(req){
     }
 }
 
-// update donation status
-async function approveDonation(req){
+// receive donation
+async function receiveDonation(req){
     try{
-        const result = await Donations.updateOne({donationId : req.params.donationId}, {$set : {donationStatus : "In Progress"}});
+        const result = await Donations.updateOne({donationId : req.params.donationId}, 
+            {$set : {donationStatus : "Received"} , });
         if(result === null){
             return {status : "failed" , message : "No donation found"}
         }
         return {
             status : "success",
-            message : "donation updated successfully"
+            message : "Donation received successfully"
         }
 
     }catch(error){
@@ -133,8 +134,9 @@ async function approveDonation(req){
     }
 }
 
-//update donation
 
+
+//update donation
 async function updateDonation(req){
     try{
         const donation = await Donations.findOneAndUpdate({donationId: req.params.donationId}, req.body, {
@@ -161,6 +163,5 @@ module.exports = {
     acceptDonation,
     updateDonation,
     createNewDonation,
-    approveDonation,
     getCampaignDonations
 }

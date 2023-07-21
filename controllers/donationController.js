@@ -2,7 +2,7 @@ const express = require("express")
 const authController = require("./authController");
 const Users = require("../models/userModel")
 const { createNewDonation, getAllDonations, getDonationDetails,
-    acceptDonation, updateDonation, approveDonation, getCampaignDonations } = require("../repository/crud/donation/donation.crud");
+    acceptDonation, updateDonation, getCampaignDonations } = require("../repository/crud/donation/donation.crud");
 
 const router = express.Router();
 
@@ -79,18 +79,7 @@ router.patch("/:donationId/acceptDonation", authController.protect(Users), async
     }
 });
 
-// approve donation by admin
-router.patch("/:donationId/approveDonation", authController.protect(Users), authController.restrictTo('Admin'), async (req, res, next) => {
-    try {
-        const result = await approveDonation(req);
-        if (result.status === "success") {
-            return res.status(200).json(result)
-        }
-        return res.status(400).json(result)
-    } catch (error) {
-        next(error)
-    }
-});
+
 
 //updates donation by donationId
 router.patch("/:donationId/updateDonation", async (req, res, next) => {
