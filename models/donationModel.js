@@ -22,6 +22,10 @@ const donationSchema = new mongoose.Schema({
         type: String,
         required: [true, "Organisation Email is required"]
     },
+    organisationContact: {
+        type: String,
+        required: [true, "Organisation Contact is required"]
+    },
     donatedTo : {
         type : String,
         required: false
