@@ -4,19 +4,7 @@ const Donations = require("../../../models/donationModel");
 // create a new donation by user()
 async function createNewDonation(req){
    try { 
-          const newDonation = await Donations.create({
-            donatedBy: req.body.donatedBy,
-            donationId: req.body.donationId,
-            campaignId: req.body.campaignId,
-            donorEmail: req.body.donorEmail,
-            organisationEmail: req.body.organisationEmail,
-            description: req.body.description,
-            location: req.body.location,
-            itemPhoto: req.body.itemPhoto,
-            quantity: req.body.quantity,
-            donatedTo : req.body.donatedTo,
-            contact : req.body.contact
-          });
+          const newDonation = await Donations.create(req.body);
 
         if(newDonation === null){
             return {
@@ -116,11 +104,48 @@ async function acceptDonation(req){
     }
 }
 
+// reject donation
+async function rejectDonation(req){
+    try{
+        const result = await Donations.updateOne({donationId : req.params.donationId}, 
+            {$set : {donationStatus : "Rejected"} , });
+        if(result === null){
+            return {status : "failed" , message : "No donation found"}
+        }
+        return {
+            status : "success",
+            message : "Donation accepted successfully"
+        }
+
+    }catch(error){
+        return {status : "error" , message: "an error occured, please try again"}
+    }
+}
+
+//deliver donation
+async function deliverDonation(req){
+    try{
+        const result = await Donations.updateOne({donationId : req.params.donationId}, 
+            {$set : {delivered : true} , });
+        if(result === null){
+            return {status : "failed" , message : "No donation found"}
+        }
+        return {
+            status : "success",
+            message : "Donation received successfully"
+        }
+
+    }catch(error){
+        return {status : "error" , message: "an error occured, please try again"}
+    }
+}
+
+
 // receive donation
 async function receiveDonation(req){
     try{
         const result = await Donations.updateOne({donationId : req.params.donationId}, 
-            {$set : {donationStatus : "Received"} , });
+            {$set : {received : true} , });
         if(result === null){
             return {status : "failed" , message : "No donation found"}
         }
@@ -157,11 +182,15 @@ async function updateDonation(req){
     }
 }
 
+
 module.exports = {
     getAllDonations,
     getDonationDetails,
     acceptDonation,
     updateDonation,
     createNewDonation,
-    getCampaignDonations
+    getCampaignDonations,
+    receiveDonation,
+    deliverDonation,
+    rejectDonation
 }

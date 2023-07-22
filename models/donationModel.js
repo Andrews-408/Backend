@@ -48,8 +48,26 @@ const donationSchema = new mongoose.Schema({
     },
     location :{
         type : String,
-        required: [true,'Please provide location for pick-up']
+        required: [false,'Please provide location for pick-up']
     },
+    deliveryMethod: {
+        type: String,
+        required : [true, 'Please provide method of delivery']
+    },
+    received : {
+        type: Boolean,
+        default: false,
+        required: [false]
+    },
+    delivered: {
+        type: Boolean,
+        default: false,
+        required: [false]
+    },
+    deliveryDate: {
+        type : Date,
+        required: [false]
+    }
 }, {timestamps : true})
 
 

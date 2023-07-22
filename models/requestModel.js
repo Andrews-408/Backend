@@ -18,6 +18,10 @@ const requestSchema = new mongoose.Schema({
         required: [true, 'Requester name is required ']
         
     },
+    location : {
+        type: String,
+        required: [true, 'Location is required ']
+    },
     username: {
         type: String,
         required: [true,'Request type is required']
@@ -37,6 +41,10 @@ const requestSchema = new mongoose.Schema({
     target: {
         type: Number,
         required: [true]
+    },
+    startDate: {
+        type: Date,
+        required: [false]
     },
     endDate: {
         type: Date,
