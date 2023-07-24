@@ -1,10 +1,11 @@
 const Donations = require("../../../models/donationModel");
+const sendMail = require("../../../Utils/email")
 
 
 // create a new donation by user()
 async function createNewDonation(req){
    try { 
-          const newDonation = await Donations.create(req.body);
+        const newDonation = await Donations.create(req.body);
 
         if(newDonation === null){
             return {
@@ -12,6 +13,13 @@ async function createNewDonation(req){
                 message: 'unable to create donation'
             }
         }
+        
+        await sendMail({
+                email: newDonation.organisationEmail,
+                subject: 'New Donation',
+                message: `<p>${newDonation.donatedBy} has successfully made a donation to support your campaign</p>`
+            });
+
         return {
             status: "success",
             message: "donation created successfully",
