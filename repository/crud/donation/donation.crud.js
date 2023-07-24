@@ -17,7 +17,7 @@ async function createNewDonation(req){
         await sendMail({
                 email: newDonation.organisationEmail,
                 subject: 'New Donation',
-                message: `<p>${newDonation.donatedBy} has successfully made a donation to support your campaign</p>`
+                message: `<p>@${newDonation.donatedBy} has successfully made a donation to support your campaign</p>`
             });
 
         return {
@@ -97,16 +97,25 @@ async function getDonationDetails(req){
 // accept donation
 async function acceptDonation(req){
     try{
-        const result = await Donations.updateOne({donationId : req.params.donationId}, 
-            {$set : {donationStatus : "Completed"} , });
+       
+        const result = await Donations.findOneAndUpdate({donationId : req.params.donationId}, 
+            {$set : {donationStatus : "Accepted"} , });
         if(result === null){
             return {status : "failed" , message : "No donation found"}
         }
+        
+
+        await sendMail({
+            email: result.donorEmail,
+            subject: 'Donation accepted',
+            message: `<p>${result.donatedTo} has accepted your donation. Thank you.</p>`
+        });
+
+
         return {
             status : "success",
             message : "Donation accepted successfully"
         }
-
     }catch(error){
         return {status : "error" , message: "an error occured, please try again"}
     }
@@ -115,14 +124,21 @@ async function acceptDonation(req){
 // reject donation
 async function rejectDonation(req){
     try{
-        const result = await Donations.updateOne({donationId : req.params.donationId}, 
+        const result = await Donations.findOneAndUpdate({donationId : req.params.donationId}, 
             {$set : {donationStatus : "Rejected"} , });
         if(result === null){
             return {status : "failed" , message : "No donation found"}
         }
+        await sendMail({
+            email: result.donorEmail,
+            subject: 'Donation rejected',
+            message: `<p>${result.donatedTo} has rejected your donation. We are sorry for the inconvenience.</p>`
+        });
+
+       
         return {
             status : "success",
-            message : "Donation accepted successfully"
+            message : "Donation rejected successfully"
         }
 
     }catch(error){
@@ -133,11 +149,19 @@ async function rejectDonation(req){
 //deliver donation
 async function deliverDonation(req){
     try{
-        const result = await Donations.updateOne({donationId : req.params.donationId}, 
+        const result = await Donations.findOneAndUpdate({donationId : req.params.donationId}, 
             {$set : {delivered : true} , });
         if(result === null){
             return {status : "failed" , message : "No donation found"}
         }
+
+        await sendMail({
+            email: result.organisationEmail,
+            subject: 'Delivery of donation in Progress',
+            message: `<p>@${result.donatedBy} has delivered the donation. Thank you.</p>`
+        });
+
+        
         return {
             status : "success",
             message : "Donation received successfully"
@@ -152,11 +176,20 @@ async function deliverDonation(req){
 // receive donation
 async function receiveDonation(req){
     try{
-        const result = await Donations.updateOne({donationId : req.params.donationId}, 
+        const result = await Donations.findOneAndUpdate({donationId : req.params.donationId}, 
             {$set : {received : true} , });
         if(result === null){
             return {status : "failed" , message : "No donation found"}
         }
+
+        await sendMail({
+            email: result.donorEmail,
+            subject: 'Donation received',
+            message: `<p>${result.donatedTo} has received your donation. Thank you for your support.</p>`
+        });
+
+        
+        
         return {
             status : "success",
             message : "Donation received successfully"

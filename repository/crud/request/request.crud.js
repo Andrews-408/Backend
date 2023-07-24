@@ -130,13 +130,14 @@ async function approveRequest(req){
 // Update Request status
 async function acceptRequest(req){
     try{
-    const result = await Requests.updateOne({requestId: req.params.requestId},{$set: {requestStatus:"Completed"}})
+    const result = await Requests.updateOne({campaignId: req.params.requestId},{$set: {requestStatus:"Completed"}})
         if (result === null){
             return{
                 status: "failed",
                 message: "Failed to update request status"
             }
         }
+        console.log(result)
         return{
             status: "success",
             message: "Successfully updated request status",
