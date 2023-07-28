@@ -16,8 +16,15 @@ async function createNewDonation(req){
         
         await sendMail({
                 email: newDonation.organisationEmail,
-                subject: 'New Donation',
-                message: `<p>@${newDonation.donatedBy} has successfully made a donation to support your campaign</p>`
+                subject: `@${newDonation.donatedBy} Expresses Interest in Supporting Your Campaign`,
+                message: `<div>
+                                <div>Dear ${newDonation.donatedTo}</div>
+                                We are thrilled to inform you that @${newDonation.donatedBy} has expressed a keen interest in supporting your campaign! 
+                                We want to share this exciting news with you right away.To view the donation details and further engage with @${newDonation.donatedBy}, 
+                                please click the link http://localhost:3000/login 
+                                Thank you.       
+                          </div>
+                          `
             });
 
         return {
@@ -26,7 +33,6 @@ async function createNewDonation(req){
             data : newDonation
         };
         }catch(err){
-            console.log(err)
             return{
                 status: "error",
                 message: "An error occured, please try again",
@@ -107,8 +113,22 @@ async function acceptDonation(req){
 
         await sendMail({
             email: result.donorEmail,
-            subject: 'Donation accepted',
-            message: `<p>${result.donatedTo} has accepted your donation. Thank you.</p>`
+            subject: ` Your Donation to Support ${result.donatedTo} has been accepted`,
+            message: `
+                         <div>
+                                <div>Dear ${result.donatedBy}</div>
+                                <div>
+                                Good news! Your donation attempt to support ${result.donatedTo} has been approved. 
+                                We sincerely appreciate your generosity and commitment to our cause.
+                                To proceed with the delivery, kindly log in here: http://localhost:3000/login
+                                Please provide detailed information about the package to ensure a smooth delivery process.
+                                </div>
+                                <div>Thank you for making a difference!</div>
+                                
+                                <div>Best regards,</div>
+                                <div>CareToShare </div>
+          
+                          </div>`
         });
 
 

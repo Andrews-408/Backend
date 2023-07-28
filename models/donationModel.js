@@ -72,6 +72,16 @@ const donationSchema = new mongoose.Schema({
         type : Date,
         required: [false]
     }
+    ,
+    deliveryDetails: {
+        type : String,
+        required: [false]
+    }
+    ,
+    deliveryMode: {
+        type : String,
+        required: [false]
+    }
 }, {timestamps : true})
 
 
