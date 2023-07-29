@@ -123,8 +123,10 @@ async function acceptDonation(req){
                                 To proceed with the delivery, kindly log in here: http://localhost:3000/login
                                 Please provide detailed information about the package to ensure a smooth delivery process.
                                 </div>
+
                                 <div>Thank you for making a difference!</div>
-                                
+
+                                <hr></hr>
                                 <div>Best regards,</div>
                                 <div>CareToShare </div>
           
@@ -170,18 +172,44 @@ async function rejectDonation(req){
 async function deliverDonation(req){
     try{
         const result = await Donations.findOneAndUpdate({donationId : req.params.donationId}, 
-            {$set : {delivered : true} , });
+            {$set : {delivered : true, deliveryMode : req.body.deliveryMode, deliveryDetails : req.body.deliveryDetails } });
         if(result === null){
             return {status : "failed" , message : "No donation found"}
         }
 
         await sendMail({
             email: result.organisationEmail,
-            subject: 'Delivery of donation in Progress',
-            message: `<p>@${result.donatedBy} has delivered the donation. Thank you.</p>`
+            subject: ' Delivery Information Updated for Your Campaign Donation',
+            message: ` 
+                    <div>   
+                        <div>
+                            We hope this message finds you well. We are pleased to inform you that the donor, 
+                            @${result.donatedBy}, has updated the delivery information for their generous donation 
+                            in support of your campaign.
+                        </div>
+
+                        <div>
+                            Below is the delivery details: 
+                        </div>
+                            <h4>DeliveryMode: ${req.body.deliveryMode}</h4>
+                            <div>${req.body.deliveryDetails}</div>
+                        <div>
+
+                        </div>
+
+                        <div>Thank you for your continued dedication to your cause, and we are 
+                                grateful to be a part of this journey together
+                        </div>
+
+                        <hr></hr>
+                        <div>Best regards,</div>
+                        <div>CareToShare </div>
+
+                    </div> 
+                    `
         });
 
-        
+        console.log("success")
         return {
             status : "success",
             message : "Donation received successfully"
@@ -205,7 +233,21 @@ async function receiveDonation(req){
         await sendMail({
             email: result.donorEmail,
             subject: 'Donation received',
-            message: `<p>${result.donatedTo} has received your donation. Thank you for your support.</p>`
+            message: `
+                <div>Dear ${result.donatedBy},</div>
+                <div>
+                    We extend a heartfelt thank you for your generous donation. 
+                    Your support means the world to us and will make a significant 
+                    difference in our campaign.
+                </div>
+
+                <div>With gratitude, ${result.donatedTo}</div>
+
+                <hr></hr>
+                <div>Best regards,</div>
+                <div>CareToShare </div>
+
+            `
         });
 
         
