@@ -191,13 +191,12 @@ async function deliverDonation(req){
                         <div>
                             Below is the delivery details: 
                         </div>
-                            <h4>DeliveryMode: ${req.body.deliveryMode}</h4>
-                            <div>${req.body.deliveryDetails}</div>
+                        <h4>DeliveryMode: ${req.body.deliveryMode}</h4>
+
+                        <div>${req.body.deliveryDetails}</div>
+
                         <div>
-
-                        </div>
-
-                        <div>Thank you for your continued dedication to your cause, and we are 
+                                Thank you for your continued dedication to your cause, and we are 
                                 grateful to be a part of this journey together
                         </div>
 
