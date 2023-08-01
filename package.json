@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon server.js",
     "debug": "ndb server.js",
-    "build": "babel src -d dist"
+    "build": "babel . -d dist"
   },
   "author": "Yeboah Andrews",
   "license": "ISC",
