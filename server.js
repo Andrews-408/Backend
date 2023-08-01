@@ -1,9 +1,7 @@
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const app = require("./app");
-
-
-
+const Users = require("./models/userModel")
 
 
 dotenv.config({path:"./config.env"});
@@ -21,10 +19,8 @@ mongoose
 
 
 
-const port = 8080;
-
-const server = app.listen(port, ()=>{
-	console.log(`App running on port ${port}....`);
+const server = app.listen(process.env.PORT, ()=>{
+	console.log(`App running on port ${process.env.PORT}....`);  
 });
 
 process.on('unhandledRejection', err=>{

@@ -5,8 +5,6 @@
   "main": "Reading-files.js",
   "scripts": {
     "start": "node server.js",
-    "debug": "ndb server.js",
-    "build": "babel . -d dist"
   },
   "author": "Yeboah Andrews",
   "license": "ISC",
