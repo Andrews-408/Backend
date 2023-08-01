@@ -4,7 +4,7 @@
   "description": "Getting started with nodejs",
   "main": "Reading-files.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "node server.js",
     "debug": "ndb server.js",
     "build": "babel . -d dist"
   },
