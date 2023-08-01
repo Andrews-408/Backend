@@ -5,7 +5,8 @@
   "main": "Reading-files.js",
   "scripts": {
     "start": "nodemon server.js",
-    "debug": "ndb server.js"
+    "debug": "ndb server.js",
+    "build": "babel src -d dist"
   },
   "author": "Yeboah Andrews",
   "license": "ISC",
